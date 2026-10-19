@@ -1,0 +1,649 @@
+openapi: 3.2.0
+info:
+  title: SocialAPIs Instagram API
+  version: 1.0.0
+  summary: REST API for public Facebook and Instagram data.
+  description: 'Public Facebook and Instagram data over one REST API: pages, posts, comments, groups, the Meta Ads Library, Marketplace, Instagram profiles, posts, reels and locations. Authenticate with your API key in the `x-api-token` header. Most calls cost 1 credit; each operation states its price. The free plan includes 200 credits a month. Also available as an MCP server at https://mcp.socialapis.io/mcp.'
+  termsOfService: https://socialapis.io/terms
+  contact:
+    name: SocialAPIs support
+    url: https://socialapis.io/contact-us
+    email: support@socialapis.io
+servers:
+- url: https://api.socialapis.io
+security:
+- ApiKey: []
+tags:
+- name: Instagram
+  description: Instagram profiles, posts, reels, highlights, search and locations.
+paths:
+  /instagram/user/id:
+    get:
+      operationId: instagram_get_user_id
+      summary: Get the unique ID of any Instagram profile from link or username
+      description: 'Resolve an Instagram username or profile URL to its two IDs: user_id (long, e.g. 17841401474538262), used by instagram_get_profile_posts and instagram_get_profile_reels, and pk (short, e.g. 528817151), used by instagram_get_profile_highlights. Pricing: 1 credit per call.'
+      tags:
+      - Instagram
+      parameters:
+      - name: link
+        in: query
+        required: false
+        description: Instagram profile URL
+        schema:
+          type: string
+      - name: username
+        in: query
+        required: false
+        description: Instagram username
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+  /instagram/profile/details:
+    get:
+      operationId: instagram_get_profile_details
+      summary: Get user profile information by username including bio, followers, posts count…
+      description: 'Get an Instagram profile by username: bio, follower and post counts, verification status and related profiles. Pricing: 1 credit per call.'
+      tags:
+      - Instagram
+      parameters:
+      - name: username
+        in: query
+        required: true
+        description: Instagram username
+        schema:
+          type: string
+      - name: link
+        in: query
+        required: false
+        description: Instagram profile URL (alternative to username)
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+  /instagram/profile/posts:
+    get:
+      operationId: instagram_get_profile_posts
+      summary: Get posts from a user profile with pagination
+      description: 'List an Instagram profile''s posts (photos, videos, carousels) with captions, like and comment counts and media URLs. Pass username (returns more results) or user_id (the long user_id from instagram_get_user_id, not the pk). Returns an end_cursor for the next page. For reels only, use instagram_get_profile_reels. Pricing: 1 credit per call.'
+      tags:
+      - Instagram
+      parameters:
+      - name: username
+        in: query
+        required: false
+        description: Instagram username (recommended — returns more results)
+        schema:
+          type: string
+      - name: user_id
+        in: query
+        required: false
+        description: 'Long Instagram user ID: user_id from instagram_get_user_id (e.g. 17841401474538262), not the pk. Alternative to username.'
+        schema:
+          type: string
+      - name: end_cursor
+        in: query
+        required: false
+        description: Pagination cursor for next page
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+  /instagram/profile/reels:
+    get:
+      operationId: instagram_get_profile_reels
+      summary: Get reels from a user profile with pagination
+      description: 'List an Instagram profile''s reels with play counts, captions, video URLs and audio metadata. Needs the long user_id from instagram_get_user_id (not the pk). Returns an end_cursor for the next page. Pricing: 1 credit per call.'
+      tags:
+      - Instagram
+      parameters:
+      - name: user_id
+        in: query
+        required: true
+        description: 'Long Instagram user ID: user_id from instagram_get_user_id (e.g. 17841401474538262), not the pk.'
+        schema:
+          type: string
+      - name: end_cursor
+        in: query
+        required: false
+        description: Pagination cursor for next page
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+  /instagram/profile/highlights:
+    get:
+      operationId: instagram_get_profile_highlights
+      summary: Get all highlights from a user profile
+      description: 'List an Instagram profile''s story highlights with titles, cover images and highlight IDs. Needs the profile''s pk from instagram_get_user_id, passed as user_id (not the long user_id). Use instagram_get_highlight_details to get the stories in one highlight. Pricing: 1 credit per call.'
+      tags:
+      - Instagram
+      parameters:
+      - name: user_id
+        in: query
+        required: true
+        description: The profile's pk from instagram_get_user_id (e.g. 528817151), not the long user_id.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+  /instagram/highlight/details:
+    get:
+      operationId: instagram_get_highlight_details
+      summary: Get details of a specific highlight by ID
+      description: 'Get the stories inside one Instagram highlight. Needs a highlight_id from instagram_get_profile_highlights. Pricing: 1 credit per call.'
+      tags:
+      - Instagram
+      parameters:
+      - name: highlight_id
+        in: query
+        required: true
+        description: Highlight ID (from profile highlights endpoint)
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+  /instagram/post/id:
+    get:
+      operationId: instagram_get_post_id
+      summary: Extract the post shortcode from an Instagram URL
+      description: 'Extract the shortcode from an Instagram post or reel URL. instagram_get_post_details needs the shortcode. Pricing: 1 credit per call.'
+      tags:
+      - Instagram
+      parameters:
+      - name: link
+        in: query
+        required: true
+        description: Instagram post URL
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+  /instagram/post/details:
+    get:
+      operationId: instagram_get_post_details
+      summary: Get details of a specific Instagram post
+      description: 'Get one Instagram post or reel in full: caption, media URLs, engagement counts, timestamp and owner. Needs the shortcode (the part after /p/ or /reel/ in the URL, or from instagram_get_post_id). Pricing: 1 credit per call.'
+      tags:
+      - Instagram
+      parameters:
+      - name: shortcode
+        in: query
+        required: true
+        description: Instagram post shortcode (e.g., DMF-GjGO0-q)
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+  /instagram/reels/feed:
+    get:
+      operationId: instagram_get_reels_feed
+      summary: Get Instagram Reels feed with recommended, trending, or chained clips
+      description: 'Get Instagram''s recommended and trending reels. Pass clips_media_id from a previous result to continue the feed or get similar reels by the same author. Not tied to a user; for one profile''s reels use instagram_get_profile_reels. Pricing: 1 credit per call.'
+      tags:
+      - Instagram
+      parameters:
+      - name: clips_media_id
+        in: query
+        required: false
+        description: Clip media ID for chaining/pagination (from previous response)
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+  /instagram/reels/audio:
+    get:
+      operationId: instagram_get_reels_by_audio
+      summary: Get Instagram Reels associated with a specific audio/music ID
+      description: 'List Instagram reels that use a given sound. Needs the audio_id (music/audio cluster ID) found in reel results'' audio metadata. Pass max_id from the previous response for the next page. Pricing: 1 credit per call.'
+      tags:
+      - Instagram
+      parameters:
+      - name: audio_id
+        in: query
+        required: true
+        description: Audio cluster ID (music ID)
+        schema:
+          type: string
+      - name: max_id
+        in: query
+        required: false
+        description: Pagination cursor for next page
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+  /instagram/search:
+    get:
+      operationId: instagram_popular_search
+      summary: Search Instagram by keyword and get popular results (users, hashtags, places)
+      description: 'Search Instagram by keyword and get the top matching users, hashtags and places. Use it to find a username, or a place''s location_id for instagram_get_location_posts. Returns an end_cursor for more. Pricing: 1 credit per call.'
+      tags:
+      - Instagram
+      parameters:
+      - name: keyword
+        in: query
+        required: true
+        description: Search keyword/query
+        schema:
+          type: string
+      - name: end_cursor
+        in: query
+        required: false
+        description: Pagination cursor for next page
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+  /instagram/location/posts:
+    get:
+      operationId: instagram_get_location_posts
+      summary: Get Instagram posts from a specific location (ranked or recent)
+      description: 'List Instagram posts tagged at a location: top posts (tab=ranked) or most recent (tab=recent). Needs a location_id, e.g. from a place in instagram_popular_search. Returns an end_cursor for the next page. Pricing: 1 credit per call.'
+      tags:
+      - Instagram
+      parameters:
+      - name: location_id
+        in: query
+        required: true
+        description: Instagram location ID
+        schema:
+          type: string
+      - name: tab
+        in: query
+        required: false
+        description: 'Filter: "recent" or "ranked"'
+        schema:
+          type: string
+      - name: end_cursor
+        in: query
+        required: false
+        description: Pagination cursor for next page
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+  /instagram/location/nearby:
+    get:
+      operationId: instagram_get_nearby_locations
+      summary: Get nearby places/locations for a specific Instagram location
+      description: 'List Instagram places near a given location, with name, category, coordinates and post count. Needs a location_id, e.g. from a place in instagram_popular_search. Pricing: 1 credit per call.'
+      tags:
+      - Instagram
+      parameters:
+      - name: location_id
+        in: query
+        required: true
+        description: Instagram location ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+components:
+  responses:
+    RateLimited:
+      description: Rate limit exceeded for your plan. Retry after the limit resets.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UpstreamTimeout:
+      description: The data source took too long to respond. No credits are charged.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid API key.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Forbidden:
+      description: Insufficient credits, expired subscription or paused account.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UpstreamError:
+      description: The data source returned an error. No credits are charged.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: A required parameter is missing or invalid.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  headers:
+    CreditsRemaining:
+      description: Credits left on your account after this call.
+      schema:
+        type: integer
+    CreditsDeducted:
+      description: Credits charged for this call.
+      schema:
+        type: integer
+  schemas:
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+        error:
+          type: string
+        message:
+          type: string
+        code:
+          type: string
+      additionalProperties: true
+  securitySchemes:
+    ApiKey:
+      type: apiKey
+      in: header
+      name: x-api-token
+      description: Your API key from https://socialapis.io/dashboard
+externalDocs:
+  description: Documentation
+  url: https://docs.socialapis.io

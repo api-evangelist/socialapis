@@ -1,0 +1,184 @@
+openapi: 3.2.0
+info:
+  title: SocialAPIs Account API
+  version: 1.0.0
+  summary: REST API for public Facebook and Instagram data.
+  description: 'Public Facebook and Instagram data over one REST API: pages, posts, comments, groups, the Meta Ads Library, Marketplace, Instagram profiles, posts, reels and locations. Authenticate with your API key in the `x-api-token` header. Most calls cost 1 credit; each operation states its price. The free plan includes 200 credits a month. Also available as an MCP server at https://mcp.socialapis.io/mcp.'
+  termsOfService: https://socialapis.io/terms
+  contact:
+    name: SocialAPIs support
+    url: https://socialapis.io/contact-us
+    email: support@socialapis.io
+servers:
+- url: https://api.socialapis.io
+security:
+- ApiKey: []
+tags:
+- name: Account
+  description: Your plan, usage and limits. These calls are free.
+paths:
+  /usage:
+    get:
+      operationId: account_get_usage
+      summary: Get your plan, credits used and credits remaining
+      description: Get your plan, credits used and credits remaining. Free, no credits charged.
+      tags:
+      - Account
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+  /usage/top-ups:
+    get:
+      operationId: account_get_top_ups
+      summary: Get your credit top-up history
+      description: Get your credit top-up history. Free, no credits charged.
+      tags:
+      - Account
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+  /usage/limits:
+    get:
+      operationId: account_get_limits
+      summary: Get your plan rate limits
+      description: Get your plan rate limits. Free, no credits charged.
+      tags:
+      - Account
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+components:
+  responses:
+    RateLimited:
+      description: Rate limit exceeded for your plan. Retry after the limit resets.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UpstreamTimeout:
+      description: The data source took too long to respond. No credits are charged.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid API key.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Forbidden:
+      description: Insufficient credits, expired subscription or paused account.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UpstreamError:
+      description: The data source returned an error. No credits are charged.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: A required parameter is missing or invalid.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  headers:
+    CreditsRemaining:
+      description: Credits left on your account after this call.
+      schema:
+        type: integer
+    CreditsDeducted:
+      description: Credits charged for this call.
+      schema:
+        type: integer
+  schemas:
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+        error:
+          type: string
+        message:
+          type: string
+        code:
+          type: string
+      additionalProperties: true
+  securitySchemes:
+    ApiKey:
+      type: apiKey
+      in: header
+      name: x-api-token
+      description: Your API key from https://socialapis.io/dashboard
+externalDocs:
+  description: Documentation
+  url: https://docs.socialapis.io

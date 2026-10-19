@@ -1,0 +1,132 @@
+openapi: 3.2.0
+info:
+  title: SocialAPIs Other API
+  version: 1.0.0
+  summary: REST API for public Facebook and Instagram data.
+  description: 'Public Facebook and Instagram data over one REST API: pages, posts, comments, groups, the Meta Ads Library, Marketplace, Instagram profiles, posts, reels and locations. Authenticate with your API key in the `x-api-token` header. Most calls cost 1 credit; each operation states its price. The free plan includes 200 credits a month. Also available as an MCP server at https://mcp.socialapis.io/mcp.'
+  termsOfService: https://socialapis.io/terms
+  contact:
+    name: SocialAPIs support
+    url: https://socialapis.io/contact-us
+    email: support@socialapis.io
+servers:
+- url: https://api.socialapis.io
+security:
+- ApiKey: []
+tags:
+- name: Other
+paths:
+  /facebook/albums/items:
+    get:
+      operationId: facebook_get_album_items
+      summary: Get the photos and videos inside a Facebook album, from a page or a group
+      description: 'Get the photos and videos inside a Facebook album (from a page or a group): media_id, media_type, url, thumbnail_uri and timestamp (Unix seconds). Needs an album_id from facebook_get_page_albums or facebook_get_group_albums. Returns an end_cursor for the next page. Pricing: 1 credit per call.'
+      tags:
+      - Other
+      parameters:
+      - name: album_id
+        in: query
+        required: true
+        description: Album ID, from facebook_get_page_albums or facebook_get_group_albums
+        schema:
+          type: string
+      - name: end_cursor
+        in: query
+        required: false
+        description: Pagination cursor
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+components:
+  responses:
+    RateLimited:
+      description: Rate limit exceeded for your plan. Retry after the limit resets.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UpstreamTimeout:
+      description: The data source took too long to respond. No credits are charged.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid API key.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Forbidden:
+      description: Insufficient credits, expired subscription or paused account.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UpstreamError:
+      description: The data source returned an error. No credits are charged.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: A required parameter is missing or invalid.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  headers:
+    CreditsRemaining:
+      description: Credits left on your account after this call.
+      schema:
+        type: integer
+    CreditsDeducted:
+      description: Credits charged for this call.
+      schema:
+        type: integer
+  schemas:
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+        error:
+          type: string
+        message:
+          type: string
+        code:
+          type: string
+      additionalProperties: true
+  securitySchemes:
+    ApiKey:
+      type: apiKey
+      in: header
+      name: x-api-token
+      description: Your API key from https://socialapis.io/dashboard
+externalDocs:
+  description: Documentation
+  url: https://docs.socialapis.io

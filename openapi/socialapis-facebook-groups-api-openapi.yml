@@ -1,0 +1,329 @@
+openapi: 3.2.0
+info:
+  title: SocialAPIs Facebook Groups API
+  version: 1.0.0
+  summary: REST API for public Facebook and Instagram data.
+  description: 'Public Facebook and Instagram data over one REST API: pages, posts, comments, groups, the Meta Ads Library, Marketplace, Instagram profiles, posts, reels and locations. Authenticate with your API key in the `x-api-token` header. Most calls cost 1 credit; each operation states its price. The free plan includes 200 credits a month. Also available as an MCP server at https://mcp.socialapis.io/mcp.'
+  termsOfService: https://socialapis.io/terms
+  contact:
+    name: SocialAPIs support
+    url: https://socialapis.io/contact-us
+    email: support@socialapis.io
+servers:
+- url: https://api.socialapis.io
+security:
+- ApiKey: []
+tags:
+- name: Facebook Groups
+  description: 'Public Facebook groups: details, ID, posts and videos.'
+paths:
+  /facebook/groups/id:
+    get:
+      operationId: facebook_get_group_id
+      summary: Retrieve the Facebook Group ID from a public group link
+      description: 'Resolve a Facebook group URL to its numeric group ID. Use facebook_get_group_details for the group''s data. Pricing: 1 credit per call.'
+      tags:
+      - Facebook Groups
+      parameters:
+      - name: link
+        in: query
+        required: true
+        description: Facebook group URL
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+  /facebook/groups/details:
+    get:
+      operationId: facebook_get_group_details
+      summary: Get detailed metadata and statistics about a Facebook group including member…
+      description: 'Get a public Facebook group''s profile: name, description, member count, privacy, rules and activity stats. Use facebook_get_group_posts for its posts. Pricing: 1 credit per call.'
+      tags:
+      - Facebook Groups
+      parameters:
+      - name: link
+        in: query
+        required: true
+        description: Facebook group URL
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+  /facebook/groups/posts:
+    get:
+      operationId: facebook_get_group_posts
+      summary: Fetch recent posts from a Facebook group, including text, media, reactions, and…
+      description: 'List recent posts from a public Facebook group, with text, media, author, reactions and comment counts. Returns 3-9 posts per call plus an end_cursor for the next page; filter by date with after_time / before_time. Pricing: ceil(posts_returned / 3) credits per call, minimum 1.'
+      tags:
+      - Facebook Groups
+      parameters:
+      - name: link
+        in: query
+        required: true
+        description: Facebook group URL
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        description: 'Maximum number of posts to return. Default: 3. Minimum: 3. Maximum: 9.'
+        schema:
+          type: number
+          minimum: 3
+          maximum: 9
+      - name: end_cursor
+        in: query
+        required: false
+        description: Pagination cursor
+        schema:
+          type: string
+      - name: after_time
+        in: query
+        required: false
+        description: ISO 8601 timestamp
+        schema:
+          type: string
+      - name: before_time
+        in: query
+        required: false
+        description: ISO 8601 timestamp
+        schema:
+          type: string
+      - name: timezone
+        in: query
+        required: false
+        description: 'IANA timezone for returned timestamps, e.g. UTC or America/New_York. Default: UTC.'
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+  /facebook/groups/videos:
+    get:
+      operationId: facebook_get_group_videos
+      summary: Get videos from a Facebook group with pagination
+      description: 'List videos posted in a public Facebook group, with video_id, title, duration, view count and thumbnail. Returns an end_cursor for the next page. Pricing: 1 credit per call.'
+      tags:
+      - Facebook Groups
+      parameters:
+      - name: link
+        in: query
+        required: true
+        description: Facebook group URL
+        schema:
+          type: string
+      - name: end_cursor
+        in: query
+        required: false
+        description: Pagination cursor
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+  /facebook/groups/albums:
+    get:
+      operationId: facebook_get_group_albums
+      summary: List the photo albums of a Facebook group (album_id, album_title, url…
+      description: 'List the photo albums of a public Facebook group, with album_id, album_title, url, thumbnail_uri, photos_count and videos_count. Returns an end_cursor for the next page. Needs the numeric group ID (group_id) from facebook_get_group_id. To get the photos in an album, pass its album_id to facebook_get_album_items. Pricing: 1 credit per call.'
+      tags:
+      - Facebook Groups
+      parameters:
+      - name: group_id
+        in: query
+        required: true
+        description: Facebook group ID, from facebook_get_group_id
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        description: 'Maximum number of albums to return. Default: 8. Minimum: 8. Maximum: 16.'
+        schema:
+          type: number
+          minimum: 8
+          maximum: 16
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+components:
+  responses:
+    RateLimited:
+      description: Rate limit exceeded for your plan. Retry after the limit resets.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UpstreamTimeout:
+      description: The data source took too long to respond. No credits are charged.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid API key.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Forbidden:
+      description: Insufficient credits, expired subscription or paused account.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UpstreamError:
+      description: The data source returned an error. No credits are charged.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: A required parameter is missing or invalid.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  headers:
+    CreditsRemaining:
+      description: Credits left on your account after this call.
+      schema:
+        type: integer
+    CreditsDeducted:
+      description: Credits charged for this call.
+      schema:
+        type: integer
+  schemas:
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+        error:
+          type: string
+        message:
+          type: string
+        code:
+          type: string
+      additionalProperties: true
+  securitySchemes:
+    ApiKey:
+      type: apiKey
+      in: header
+      name: x-api-token
+      description: Your API key from https://socialapis.io/dashboard
+externalDocs:
+  description: Documentation
+  url: https://docs.socialapis.io

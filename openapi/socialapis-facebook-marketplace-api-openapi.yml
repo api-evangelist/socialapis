@@ -1,0 +1,558 @@
+openapi: 3.2.0
+info:
+  title: SocialAPIs Facebook Marketplace API
+  version: 1.0.0
+  summary: REST API for public Facebook and Instagram data.
+  description: 'Public Facebook and Instagram data over one REST API: pages, posts, comments, groups, the Meta Ads Library, Marketplace, Instagram profiles, posts, reels and locations. Authenticate with your API key in the `x-api-token` header. Most calls cost 1 credit; each operation states its price. The free plan includes 200 credits a month. Also available as an MCP server at https://mcp.socialapis.io/mcp.'
+  termsOfService: https://socialapis.io/terms
+  contact:
+    name: SocialAPIs support
+    url: https://socialapis.io/contact-us
+    email: support@socialapis.io
+servers:
+- url: https://api.socialapis.io
+security:
+- ApiKey: []
+tags:
+- name: Facebook Marketplace
+  description: Marketplace listings, vehicles, rentals, sellers and categories.
+paths:
+  /facebook/marketplace/search:
+    get:
+      operationId: facebook_marketplace_search
+      summary: Search Facebook Marketplace items with filters for location, price, category…
+      description: 'Search general Facebook Marketplace listings (items for sale) by keyword or category near a location, with price, condition, radius and sort filters. Returns listings with their listing_id, plus an end_cursor. For cars and other vehicles use facebook_marketplace_vehicles; for homes and rooms to rent use facebook_marketplace_rentals. Get coordinates from facebook_marketplace_city_coordinates. Pricing: 1 credit per call.'
+      tags:
+      - Facebook Marketplace
+      parameters:
+      - name: query
+        in: query
+        required: false
+        description: Keyword to search listings for, e.g. iphone 15
+        schema:
+          type: string
+      - name: category_url
+        in: query
+        required: false
+        description: Category URL slug
+        schema:
+          type: string
+      - name: proxy_country
+        in: query
+        required: false
+        description: Optional premium proxy country
+        schema:
+          type: string
+      - name: commerce_search_sort_by
+        in: query
+        required: false
+        description: 'Sort: BEST_MATCH, CREATION_TIME_DESCEND, PRICE_ASCEND, etc.'
+        schema:
+          type: string
+      - name: commerce_search_and_rp_condition
+        in: query
+        required: false
+        description: 'Condition: new, used_like_new, used_good, used_fair'
+        schema:
+          type: string
+      - name: filter_location_latitude
+        in: query
+        required: false
+        description: Latitude of the search center, e.g. 30.2672 (from facebook_marketplace_city_coordinates)
+        schema:
+          type: string
+      - name: filter_location_longitude
+        in: query
+        required: false
+        description: Longitude of the search center, e.g. -97.7431 (from facebook_marketplace_city_coordinates)
+        schema:
+          type: string
+      - name: filter_price_lower_bound
+        in: query
+        required: false
+        description: Minimum price in the local currency, whole number, e.g. 100
+        schema:
+          type: number
+      - name: filter_price_upper_bound
+        in: query
+        required: false
+        description: Maximum price in the local currency, whole number, e.g. 2000
+        schema:
+          type: number
+      - name: filter_radius_km
+        in: query
+        required: false
+        description: Search radius around the center in kilometres, e.g. 40
+        schema:
+          type: number
+      - name: posted_today
+        in: query
+        required: false
+        description: When "true", limit to items posted today
+        schema:
+          type: boolean
+      - name: exact_match
+        in: query
+        required: false
+        description: When "true", exact match search
+        schema:
+          type: boolean
+      - name: end_cursor
+        in: query
+        required: false
+        description: Pagination cursor
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated keys to include (e.g. 'items.id,items.title,page_info.end_cursor'). Invalid keys are ignored.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+  /facebook/marketplace/listing:
+    get:
+      operationId: facebook_marketplace_listing
+      summary: Get detailed info about a single Marketplace listing
+      description: 'Get one Marketplace listing in full: title, price, description, condition, all photos, location and seller. Needs the listing_id from a Marketplace search result. Pricing: 1 credit per call.'
+      tags:
+      - Facebook Marketplace
+      parameters:
+      - name: listing_id
+        in: query
+        required: true
+        description: Marketplace listing ID, from a Marketplace search result
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+  /facebook/marketplace/seller:
+    get:
+      operationId: facebook_marketplace_seller
+      summary: Get seller profile, ratings, reviews, and badges
+      description: 'Get a Marketplace seller''s profile: name, join date, rating, review count and badges. Needs the seller_id from facebook_marketplace_listing. Pricing: 1 credit per call.'
+      tags:
+      - Facebook Marketplace
+      parameters:
+      - name: seller_id
+        in: query
+        required: true
+        description: Seller ID, from the seller field of facebook_marketplace_listing
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+  /facebook/marketplace/categories:
+    get:
+      operationId: facebook_marketplace_categories
+      summary: Get all Marketplace categories with seo_url and category ID values
+      description: 'List Marketplace categories with their IDs and category_url values. Use a category_url to filter facebook_marketplace_search. Pricing: 1 credit per call.'
+      tags:
+      - Facebook Marketplace
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+  /facebook/marketplace/city-coordinates:
+    get:
+      operationId: facebook_marketplace_city_coordinates
+      summary: Get GPS coordinates for a city to use as Marketplace location filters
+      description: 'Convert a city name to the latitude and longitude that the Marketplace search tools expect in filter_location_latitude / filter_location_longitude. Pricing: 1 credit per call.'
+      tags:
+      - Facebook Marketplace
+      parameters:
+      - name: city
+        in: query
+        required: true
+        description: City name, e.g. Austin
+        schema:
+          type: string
+      - name: country
+        in: query
+        required: false
+        description: Country name or code
+        schema:
+          type: string
+      - name: exactly_one
+        in: query
+        required: false
+        description: When "true", return exactly one result
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+  /facebook/marketplace/vehicles:
+    get:
+      operationId: facebook_marketplace_vehicles
+      summary: Search Marketplace vehicle listings with filters for location, price, mileage…
+      description: 'Search Facebook Marketplace vehicle listings (cars, trucks, motorcycles) near a location, with price, radius and seller-type filters. Returns listings with title, price, mileage, year and listing_id, plus an end_cursor. For non-vehicle items, use facebook_marketplace_search. Pricing: 1 credit per call.'
+      tags:
+      - Facebook Marketplace
+      parameters:
+      - name: sort_by
+        in: query
+        required: false
+        description: 'Sort: CREATION_TIME_DESCEND, PRICE_ASCEND, VEHICLE_MILEAGE_ASCEND, etc.'
+        schema:
+          type: string
+      - name: filter_location_latitude
+        in: query
+        required: false
+        description: Latitude of the search center, e.g. 30.2672 (from facebook_marketplace_city_coordinates)
+        schema:
+          type: string
+      - name: filter_location_longitude
+        in: query
+        required: false
+        description: Longitude of the search center, e.g. -97.7431 (from facebook_marketplace_city_coordinates)
+        schema:
+          type: string
+      - name: filter_price_lower_bound
+        in: query
+        required: false
+        description: Minimum price in the local currency, whole number, e.g. 100
+        schema:
+          type: number
+      - name: filter_price_upper_bound
+        in: query
+        required: false
+        description: Maximum price in the local currency, whole number, e.g. 2000
+        schema:
+          type: number
+      - name: filter_radius_km
+        in: query
+        required: false
+        description: Search radius around the center in kilometres, e.g. 40
+        schema:
+          type: number
+      - name: is_c2c_listing_only
+        in: query
+        required: false
+        description: Individual sellers only
+        schema:
+          type: boolean
+      - name: exact_match
+        in: query
+        required: false
+        description: Exact match search
+        schema:
+          type: boolean
+      - name: end_cursor
+        in: query
+        required: false
+        description: Pagination cursor
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+  /facebook/marketplace/rentals:
+    get:
+      operationId: facebook_marketplace_rentals
+      summary: Search Marketplace rental property listings with filters for bedrooms…
+      description: 'Search Facebook Marketplace rental listings (apartments, houses, rooms) near a location, with price, bedroom, bathroom and radius filters. Returns rental listings with their listing_id, plus an end_cursor. For items for sale, use facebook_marketplace_search. Pricing: 1 credit per call.'
+      tags:
+      - Facebook Marketplace
+      parameters:
+      - name: sort_by
+        in: query
+        required: false
+        description: 'Sort: CREATION_TIME_DESCEND, PRICE_ASCEND, BEST_MATCH'
+        schema:
+          type: string
+      - name: filter_location_latitude
+        in: query
+        required: false
+        description: Latitude of the search center, e.g. 30.2672 (from facebook_marketplace_city_coordinates)
+        schema:
+          type: string
+      - name: filter_location_longitude
+        in: query
+        required: false
+        description: Longitude of the search center, e.g. -97.7431 (from facebook_marketplace_city_coordinates)
+        schema:
+          type: string
+      - name: filter_price_lower_bound
+        in: query
+        required: false
+        description: Minimum price in the local currency, whole number, e.g. 100
+        schema:
+          type: number
+      - name: filter_price_upper_bound
+        in: query
+        required: false
+        description: Maximum price in the local currency, whole number, e.g. 2000
+        schema:
+          type: number
+      - name: filter_radius_km
+        in: query
+        required: false
+        description: Search radius around the center in kilometres, e.g. 40
+        schema:
+          type: number
+      - name: filter_bedrooms_min
+        in: query
+        required: false
+        description: Minimum number of bedrooms, e.g. 2
+        schema:
+          type: number
+      - name: filter_bedrooms_max
+        in: query
+        required: false
+        description: Maximum number of bedrooms
+        schema:
+          type: number
+      - name: filter_bathrooms_min
+        in: query
+        required: false
+        description: Minimum number of bathrooms, e.g. 1
+        schema:
+          type: number
+      - name: filter_bathrooms_max
+        in: query
+        required: false
+        description: Maximum number of bathrooms
+        schema:
+          type: number
+      - name: is_c2c_listing_only
+        in: query
+        required: false
+        description: Individual sellers only
+        schema:
+          type: boolean
+      - name: end_cursor
+        in: query
+        required: false
+        description: Pagination cursor
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+components:
+  responses:
+    RateLimited:
+      description: Rate limit exceeded for your plan. Retry after the limit resets.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UpstreamTimeout:
+      description: The data source took too long to respond. No credits are charged.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid API key.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Forbidden:
+      description: Insufficient credits, expired subscription or paused account.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UpstreamError:
+      description: The data source returned an error. No credits are charged.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: A required parameter is missing or invalid.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  headers:
+    CreditsRemaining:
+      description: Credits left on your account after this call.
+      schema:
+        type: integer
+    CreditsDeducted:
+      description: Credits charged for this call.
+      schema:
+        type: integer
+  schemas:
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+        error:
+          type: string
+        message:
+          type: string
+        code:
+          type: string
+      additionalProperties: true
+  securitySchemes:
+    ApiKey:
+      type: apiKey
+      in: header
+      name: x-api-token
+      description: Your API key from https://socialapis.io/dashboard
+externalDocs:
+  description: Documentation
+  url: https://docs.socialapis.io

@@ -1,0 +1,348 @@
+openapi: 3.2.0
+info:
+  title: SocialAPIs Meta Ads Library API
+  version: 1.0.0
+  summary: REST API for public Facebook and Instagram data.
+  description: 'Public Facebook and Instagram data over one REST API: pages, posts, comments, groups, the Meta Ads Library, Marketplace, Instagram profiles, posts, reels and locations. Authenticate with your API key in the `x-api-token` header. Most calls cost 1 credit; each operation states its price. The free plan includes 200 credits a month. Also available as an MCP server at https://mcp.socialapis.io/mcp.'
+  termsOfService: https://socialapis.io/terms
+  contact:
+    name: SocialAPIs support
+    url: https://socialapis.io/contact-us
+    email: support@socialapis.io
+servers:
+- url: https://api.socialapis.io
+security:
+- ApiKey: []
+tags:
+- name: Meta Ads Library
+  description: Ads, advertisers and ad details from the Meta Ads Library.
+paths:
+  /facebook/ads/countries:
+    get:
+      operationId: facebook_ads_countries
+      summary: Get list of supported country codes for Meta Ads Library filtering
+      description: 'List the country codes the Ads Library tools accept in their country parameter. Pricing: 1 credit per call.'
+      tags:
+      - Meta Ads Library
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+  /facebook/ads/search:
+    get:
+      operationId: facebook_ads_search
+      summary: Search ads in the Meta Ad Library by keyword or page ID with filters
+      description: 'Search ads in the Meta Ad Library. Pass a keyword (query) to find ads about a topic, or ad_page_id to list one advertiser''s ads; filter by country, active status and date range, sort by impressions or recency. Returns ads with creative, body text, dates, platforms and snapshot URL, plus an end_cursor. Get an advertiser''s ad_page_id from facebook_ads_keywords or facebook_get_page_details. Pricing: 1 credit per call.'
+      tags:
+      - Meta Ads Library
+      parameters:
+      - name: query
+        in: query
+        required: false
+        description: Search keyword for ads
+        schema:
+          type: string
+      - name: ad_page_id
+        in: query
+        required: false
+        description: Facebook AD Page ID (alternative to query)
+        schema:
+          type: string
+      - name: country
+        in: query
+        required: false
+        description: ISO country code or "ALL"
+        schema:
+          type: string
+      - name: activeStatus
+        in: query
+        required: false
+        description: 'Filter: ALL, Active, or Inactive'
+        schema:
+          type: string
+      - name: after_time
+        in: query
+        required: false
+        description: Filter ads after this date (YYYY-MM-DD)
+        schema:
+          type: string
+      - name: before_time
+        in: query
+        required: false
+        description: Filter ads before this date (YYYY-MM-DD)
+        schema:
+          type: string
+      - name: sort_data
+        in: query
+        required: false
+        description: Sort by "impressions" or "recent"
+        schema:
+          type: string
+      - name: end_cursor
+        in: query
+        required: false
+        description: Pagination cursor
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+  /facebook/ads/page-details:
+    get:
+      operationId: facebook_ads_page_details
+      summary: Get detailed info about a specific Facebook page from the Ads Library
+      description: 'Get an advertiser''s Ads Library profile: page name, verification status, category, location and total ad count. Needs the page ID (ad_page_id from facebook_get_page_details or page_id from facebook_ads_keywords). To list the ads themselves, use facebook_ads_search with ad_page_id. Pricing: 1 credit per call.'
+      tags:
+      - Meta Ads Library
+      parameters:
+      - name: page_id
+        in: query
+        required: true
+        description: 'Advertiser page ID: ad_page_id from facebook_get_page_details, or page_id from facebook_ads_keywords'
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+  /facebook/ads/archive-details:
+    get:
+      operationId: facebook_ads_archive_details
+      summary: Get detailed info about a specific archived ad by archive ID
+      description: 'Get one Ad Library ad in full: creative, body text, CTA, platforms, countries, date range, and spend and impression estimates where Meta publishes them. Needs the ad_archive_id from a facebook_ads_search result. Pricing: 1 credit per call.'
+      tags:
+      - Meta Ads Library
+      parameters:
+      - name: ad_archive_id
+        in: query
+        required: true
+        description: Ad Library archive ID of the ad (ad_archive_id from a facebook_ads_search result)
+        schema:
+          type: string
+      - name: page_id
+        in: query
+        required: false
+        description: Facebook Page ID
+        schema:
+          type: string
+      - name: country
+        in: query
+        required: false
+        description: ISO country code or "ALL"
+        schema:
+          type: string
+      - name: is_ad_non_political
+        in: query
+        required: false
+        description: Filter non-political ads
+        schema:
+          type: boolean
+      - name: is_ad_not_aaa_eligible
+        in: query
+        required: false
+        description: Filter AAA eligibility
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+  /facebook/ads/keywords:
+    get:
+      operationId: facebook_ads_keywords
+      summary: Search for ads by keyword with optional country filter
+      description: 'Find advertisers running ads that match a keyword: returns Facebook pages with their page_id and ad count. Use it to discover who advertises on a topic, then pass a page_id to facebook_ads_search (as ad_page_id) or facebook_ads_page_details. To get the ads for a keyword directly, use facebook_ads_search. Pricing: 1 credit per call.'
+      tags:
+      - Meta Ads Library
+      parameters:
+      - name: query
+        in: query
+        required: true
+        description: Keyword to find advertisers for, e.g. running shoes
+        schema:
+          type: string
+      - name: country
+        in: query
+        required: false
+        description: ISO country code or "ALL"
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+components:
+  responses:
+    RateLimited:
+      description: Rate limit exceeded for your plan. Retry after the limit resets.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UpstreamTimeout:
+      description: The data source took too long to respond. No credits are charged.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid API key.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Forbidden:
+      description: Insufficient credits, expired subscription or paused account.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UpstreamError:
+      description: The data source returned an error. No credits are charged.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: A required parameter is missing or invalid.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  headers:
+    CreditsRemaining:
+      description: Credits left on your account after this call.
+      schema:
+        type: integer
+    CreditsDeducted:
+      description: Credits charged for this call.
+      schema:
+        type: integer
+  schemas:
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+        error:
+          type: string
+        message:
+          type: string
+        code:
+          type: string
+      additionalProperties: true
+  securitySchemes:
+    ApiKey:
+      type: apiKey
+      in: header
+      name: x-api-token
+      description: Your API key from https://socialapis.io/dashboard
+externalDocs:
+  description: Documentation
+  url: https://docs.socialapis.io

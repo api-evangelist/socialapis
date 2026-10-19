@@ -83,12 +83,12 @@ hosts:
   - spec-found
   - contract-discovery
   - well-known
+  - vendor-detect
   types:
   - Website
   - DeveloperPortal
   - Support
   - Blog
-  - Roadmap
   - Pricing
   - SignUp
   - TermsOfService
@@ -96,6 +96,8 @@ hosts:
   serves:
   - docs
   - spec
+  - cdn
+  vendor: cloudflare
   registrable_domain: socialapis.io
   role: website
   relation: own
@@ -129,9 +131,12 @@ hosts:
 - host: www.postman.com
   found_by:
   - pointer
+  - vendor-detect
   types:
   - Postman
-  serves: []
+  serves:
+  - api-collections
+  vendor: postman
   registrable_domain: postman.com
   role: collections
   relation: platform

@@ -1,0 +1,28 @@
+{
+  "provider": "socialapis",
+  "sources": [
+    "socialapis-openapi.json"
+  ],
+  "outputs": [
+    "socialapis-account-api-openapi.yml",
+    "socialapis-facebook-groups-api-openapi.yml",
+    "socialapis-facebook-marketplace-api-openapi.yml",
+    "socialapis-facebook-media-api-openapi.yml",
+    "socialapis-facebook-pages-api-openapi.yml",
+    "socialapis-facebook-posts-api-openapi.yml",
+    "socialapis-facebook-search-api-openapi.yml",
+    "socialapis-instagram-api-openapi.yml",
+    "socialapis-meta-ads-library-api-openapi.yml",
+    "socialapis-other-api-openapi.yml"
+  ],
+  "archived": [
+    "archived openapi/socialapis-openapi.json"
+  ],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "socialapis-openapi.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "apis.yml register: written (+10 apis, 10 total)"
+  ],
+  "skipped": []
+}

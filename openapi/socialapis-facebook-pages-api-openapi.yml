@@ -1,0 +1,392 @@
+openapi: 3.2.0
+info:
+  title: SocialAPIs Facebook Pages API
+  version: 1.0.0
+  summary: REST API for public Facebook and Instagram data.
+  description: 'Public Facebook and Instagram data over one REST API: pages, posts, comments, groups, the Meta Ads Library, Marketplace, Instagram profiles, posts, reels and locations. Authenticate with your API key in the `x-api-token` header. Most calls cost 1 credit; each operation states its price. The free plan includes 200 credits a month. Also available as an MCP server at https://mcp.socialapis.io/mcp.'
+  termsOfService: https://socialapis.io/terms
+  contact:
+    name: SocialAPIs support
+    url: https://socialapis.io/contact-us
+    email: support@socialapis.io
+servers:
+- url: https://api.socialapis.io
+security:
+- ApiKey: []
+tags:
+- name: Facebook Pages
+  description: 'Public Facebook pages: details, ID, posts, videos and reels.'
+paths:
+  /facebook/pages/id:
+    get:
+      operationId: facebook_get_page_id
+      summary: Get Facebook page id
+      description: 'Resolve a Facebook page URL to its numeric page ID. Use it when another tool needs a page or profile ID; use facebook_get_page_details for the page''s data. Pricing: 1 credit per call.'
+      tags:
+      - Facebook Pages
+      parameters:
+      - name: link
+        in: query
+        required: true
+        description: Facebook page URL (e.g., https://facebook.com/nike)
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+  /facebook/pages/details:
+    get:
+      operationId: facebook_get_page_details
+      summary: Get Facebook page details
+      description: 'Get a Facebook page''s profile: name, category, follower and like counts, bio, contact info (email, phone, website, address), rating and the ad_page_id used by the Ads Library tools. Use it when you have the page URL; to find a page by name, use facebook_search_pages first. Pricing: 1 credit per call; 5 credits when exact_followers_count=true.'
+      tags:
+      - Facebook Pages
+      parameters:
+      - name: link
+        in: query
+        required: true
+        description: Facebook page URL
+        schema:
+          type: string
+      - name: exact_followers_count
+        in: query
+        required: false
+        description: 'When true, performs a deeper scrape to return the exact follower count (e.g. 38,493,217 instead of "38M"). Charges 5 credits when true, 1 credit otherwise. Default: false.'
+        schema:
+          type: boolean
+      - name: page_section
+        in: query
+        required: false
+        description: 'Which section to return. `default`: the page''s standard details. `about`: details read from the page''s About tab. `work_and_education`: the standard details plus the profile''s work and education history (`work_and_education.work`, `.college`, `.high_school`; each entry has title, organization, period, location and description). Default: default.'
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+  /facebook/pages/posts:
+    get:
+      operationId: facebook_get_page_posts
+      summary: Get Facebook page posts
+      description: 'List a Facebook page''s recent posts, newest first, with text, media, reactions, comment and share counts. Returns 3-9 posts per call plus an end_cursor for the next page; filter by date with after_time / before_time. For reels or videos only, use facebook_get_page_reels or facebook_get_page_videos. Pricing: ceil(posts_returned / 3) credits per call, minimum 1.'
+      tags:
+      - Facebook Pages
+      parameters:
+      - name: link
+        in: query
+        required: true
+        description: Facebook page URL
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        description: 'Maximum number of posts to return. Default: 3. Minimum: 3. Maximum: 9.'
+        schema:
+          type: number
+          minimum: 3
+          maximum: 9
+      - name: end_cursor
+        in: query
+        required: false
+        description: Pagination cursor for next page of results
+        schema:
+          type: string
+      - name: after_time
+        in: query
+        required: false
+        description: ISO 8601 timestamp - only return posts after this time
+        schema:
+          type: string
+      - name: before_time
+        in: query
+        required: false
+        description: ISO 8601 timestamp - only return posts before this time
+        schema:
+          type: string
+      - name: timezone
+        in: query
+        required: false
+        description: Timezone for timestamps (e.g., UTC, America/New_York)
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+  /facebook/pages/reels:
+    get:
+      operationId: facebook_get_page_reels
+      summary: Get Facebook page reels
+      description: 'List a Facebook page''s reels (short-form videos). Returns an end_cursor for the next page. For long-form videos, use facebook_get_page_videos. Pricing: 1 credit per call.'
+      tags:
+      - Facebook Pages
+      parameters:
+      - name: link
+        in: query
+        required: true
+        description: Facebook page URL
+        schema:
+          type: string
+      - name: end_cursor
+        in: query
+        required: false
+        description: Pagination cursor
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+  /facebook/pages/videos:
+    get:
+      operationId: facebook_get_page_videos
+      summary: Get Facebook page videos
+      description: 'List videos uploaded to a Facebook page, with video_id, title, duration, view count and thumbnail. Provide the page URL (link) or its numeric profile_id. Returns an end_cursor for the next page. For short-form reels, use facebook_get_page_reels. Pricing: 1 credit per call.'
+      tags:
+      - Facebook Pages
+      parameters:
+      - name: link
+        in: query
+        required: true
+        description: Facebook page URL
+        schema:
+          type: string
+      - name: end_cursor
+        in: query
+        required: false
+        description: Pagination cursor
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+  /facebook/pages/albums:
+    get:
+      operationId: facebook_get_page_albums
+      summary: List the photo albums of a Facebook page (album_id, album_title, url…
+      description: 'List the photo albums of a Facebook page, with album_id, album_title, url, thumbnail_uri and album_items_count (text, e.g. "400 items"). Needs the numeric page ID (profile_id) from facebook_get_page_id. Returns an end_cursor for the next page. To get the photos in an album, pass its album_id to facebook_get_album_items. Pricing: 1 credit per call.'
+      tags:
+      - Facebook Pages
+      parameters:
+      - name: profile_id
+        in: query
+        required: true
+        description: Facebook page ID, from facebook_get_page_id
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        description: 'Maximum number of albums to return. Default: 8. Minimum: 8. Maximum: 16.'
+        schema:
+          type: number
+          minimum: 8
+          maximum: 16
+      - name: end_cursor
+        in: query
+        required: false
+        description: Pagination cursor
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.
+          headers:
+            X-SocialAPIs-Credits-Deducted:
+              $ref: '#/components/headers/CreditsDeducted'
+            X-SocialAPIs-Credits-Remaining:
+              $ref: '#/components/headers/CreditsRemaining'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '502':
+          $ref: '#/components/responses/UpstreamError'
+        '504':
+          $ref: '#/components/responses/UpstreamTimeout'
+components:
+  responses:
+    RateLimited:
+      description: Rate limit exceeded for your plan. Retry after the limit resets.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UpstreamTimeout:
+      description: The data source took too long to respond. No credits are charged.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid API key.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Forbidden:
+      description: Insufficient credits, expired subscription or paused account.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UpstreamError:
+      description: The data source returned an error. No credits are charged.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: A required parameter is missing or invalid.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  headers:
+    CreditsRemaining:
+      description: Credits left on your account after this call.
+      schema:
+        type: integer
+    CreditsDeducted:
+      description: Credits charged for this call.
+      schema:
+        type: integer
+  schemas:
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+        error:
+          type: string
+        message:
+          type: string
+        code:
+          type: string
+      additionalProperties: true
+  securitySchemes:
+    ApiKey:
+      type: apiKey
+      in: header
+      name: x-api-token
+      description: Your API key from https://socialapis.io/dashboard
+externalDocs:
+  description: Documentation
+  url: https://docs.socialapis.io

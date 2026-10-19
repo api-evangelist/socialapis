@@ -100,15 +100,106 @@ common:
   url: https://www.postman.com/socialapis/workspace
 
 apis:
-- name: SocialAPIs REST API
-  description: REST API for public Facebook and Instagram data, providing pages, posts, comments, groups, Meta Ads Library, Marketplace, Instagram
-    profiles, posts, reels and locations.
+- aid: socialapis:socialapis-account-api
+  name: SocialAPIs Account API
+  description: Your plan, usage and limits. These calls are free.
   humanURL: https://docs.socialapis.io/api-reference/facebook
   baseURL: https://api.socialapis.io
+  tags:
+  - Account
   properties:
   - type: OpenAPI
-    url: openapi/socialapis-openapi.json
-  aid: socialapis:socialapis-rest-api
+    url: openapi/socialapis-account-api-openapi.yml
+- aid: socialapis:socialapis-facebook-groups-api
+  name: SocialAPIs Facebook Groups API
+  description: 'Public Facebook groups: details, ID, posts and videos.'
+  humanURL: https://docs.socialapis.io/api-reference/facebook
+  baseURL: https://api.socialapis.io
+  tags:
+  - Facebook Groups
+  properties:
+  - type: OpenAPI
+    url: openapi/socialapis-facebook-groups-api-openapi.yml
+- aid: socialapis:socialapis-facebook-marketplace-api
+  name: SocialAPIs Facebook Marketplace API
+  description: Marketplace listings, vehicles, rentals, sellers and categories.
+  humanURL: https://docs.socialapis.io/api-reference/facebook
+  baseURL: https://api.socialapis.io
+  tags:
+  - Facebook Marketplace
+  properties:
+  - type: OpenAPI
+    url: openapi/socialapis-facebook-marketplace-api-openapi.yml
+- aid: socialapis:socialapis-facebook-media-api
+  name: SocialAPIs Facebook Media API
+  description: Download Facebook images and videos.
+  humanURL: https://docs.socialapis.io/api-reference/facebook
+  baseURL: https://api.socialapis.io
+  tags:
+  - Facebook Media
+  properties:
+  - type: OpenAPI
+    url: openapi/socialapis-facebook-media-api-openapi.yml
+- aid: socialapis:socialapis-facebook-pages-api
+  name: SocialAPIs Facebook Pages API
+  description: 'Public Facebook pages: details, ID, posts, videos and reels.'
+  humanURL: https://docs.socialapis.io/api-reference/facebook
+  baseURL: https://api.socialapis.io
+  tags:
+  - Facebook Pages
+  properties:
+  - type: OpenAPI
+    url: openapi/socialapis-facebook-pages-api-openapi.yml
+- aid: socialapis:socialapis-facebook-posts-api
+  name: SocialAPIs Facebook Posts API
+  description: 'Facebook posts and videos: details, attachments, comments and replies.'
+  humanURL: https://docs.socialapis.io/api-reference/facebook
+  baseURL: https://api.socialapis.io
+  tags:
+  - Facebook Posts
+  properties:
+  - type: OpenAPI
+    url: openapi/socialapis-facebook-posts-api-openapi.yml
+- aid: socialapis:socialapis-facebook-search-api
+  name: SocialAPIs Facebook Search API
+  description: Keyword search for Facebook pages, people, posts, videos and locations.
+  humanURL: https://docs.socialapis.io/api-reference/facebook
+  baseURL: https://api.socialapis.io
+  tags:
+  - Facebook Search
+  properties:
+  - type: OpenAPI
+    url: openapi/socialapis-facebook-search-api-openapi.yml
+- aid: socialapis:socialapis-instagram-api
+  name: SocialAPIs Instagram API
+  description: Instagram profiles, posts, reels, highlights, search and locations.
+  humanURL: https://docs.socialapis.io/api-reference/facebook
+  baseURL: https://api.socialapis.io
+  tags:
+  - Instagram
+  properties:
+  - type: OpenAPI
+    url: openapi/socialapis-instagram-api-openapi.yml
+- aid: socialapis:socialapis-meta-ads-library-api
+  name: SocialAPIs Meta Ads Library API
+  description: Ads, advertisers and ad details from the Meta Ads Library.
+  humanURL: https://docs.socialapis.io/api-reference/facebook
+  baseURL: https://api.socialapis.io
+  tags:
+  - Meta Ads Library
+  properties:
+  - type: OpenAPI
+    url: openapi/socialapis-meta-ads-library-api-openapi.yml
+- aid: socialapis:socialapis-other-api
+  name: SocialAPIs Other API
+  description: The Other API from SocialAPIs — 1 operation(s) for other.
+  humanURL: https://docs.socialapis.io/api-reference/facebook
+  baseURL: https://api.socialapis.io
+  tags:
+  - Other
+  properties:
+  - type: OpenAPI
+    url: openapi/socialapis-other-api-openapi.yml
 x-enrichment:
   date: '2026-10-19'
   status: enriched
