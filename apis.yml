@@ -1,7 +1,6 @@
 aid: socialapis
 name: SocialAPIs
-description: 'SocialAPIs is a company surfaced via the API Evangelist harvest backlog (source: g2-catalog)
-  and added to the network as a stub for full-pipeline profiling.'
+description: 'SocialAPIs provides developers with easy access to Facebook and other social media data through a suite of APIs. The platform offers real-time data on pages, groups, posts, and more, enabling developers to build applications for lead generation, analytics, and social listening. Trusted by over 5,000 developers, SocialAPIs delivers high uptime, fast responses, and comprehensive documentation to help integrate social data into products quickly and reliably.'
 url: https://raw.githubusercontent.com/api-evangelist/socialapis/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:g2-catalog
@@ -19,5 +18,7 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: DomainSecurity
+  url: security/socialapis-domain-security.yml
 - type: Website
   url: https://socialapis.io/
