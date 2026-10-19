@@ -1,0 +1,16 @@
+generated: '2026-10-19'
+method: none
+source:
+- https://zapier.com/apps/socialapis/integrations
+- https://n8n.io/integrations/socialapis/
+- https://composio.dev/toolkits/socialapis
+- https://monid.ai/tools/socialapis
+checked:
+- https://composio.dev/toolkits/socialapis
+- https://monid.ai/tools/socialapis
+- https://n8n.io/integrations/socialapis/
+- https://zapier.com/apps/socialapis/integrations
+summary: null
+marketplace_apps: []
+edges: []
+templates: []

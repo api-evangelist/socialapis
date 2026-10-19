@@ -1,0 +1,4121 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "SocialAPIs",
+    "version": "1.0.0",
+    "summary": "REST API for public Facebook and Instagram data.",
+    "description": "Public Facebook and Instagram data over one REST API: pages, posts, comments, groups, the Meta Ads Library, Marketplace, Instagram profiles, posts, reels and locations. Authenticate with your API key in the `x-api-token` header. Most calls cost 1 credit; each operation states its price. The free plan includes 200 credits a month. Also available as an MCP server at https://mcp.socialapis.io/mcp.",
+    "termsOfService": "https://socialapis.io/terms",
+    "contact": {
+      "name": "SocialAPIs support",
+      "url": "https://socialapis.io/contact-us",
+      "email": "support@socialapis.io"
+    }
+  },
+  "externalDocs": {
+    "description": "Documentation",
+    "url": "https://docs.socialapis.io"
+  },
+  "servers": [
+    {
+      "url": "https://api.socialapis.io"
+    }
+  ],
+  "security": [
+    {
+      "ApiKey": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Facebook Pages",
+      "description": "Public Facebook pages: details, ID, posts, videos and reels."
+    },
+    {
+      "name": "Facebook Groups",
+      "description": "Public Facebook groups: details, ID, posts and videos."
+    },
+    {
+      "name": "Other"
+    },
+    {
+      "name": "Facebook Posts",
+      "description": "Facebook posts and videos: details, attachments, comments and replies."
+    },
+    {
+      "name": "Facebook Search",
+      "description": "Keyword search for Facebook pages, people, posts, videos and locations."
+    },
+    {
+      "name": "Meta Ads Library",
+      "description": "Ads, advertisers and ad details from the Meta Ads Library."
+    },
+    {
+      "name": "Facebook Marketplace",
+      "description": "Marketplace listings, vehicles, rentals, sellers and categories."
+    },
+    {
+      "name": "Facebook Media",
+      "description": "Download Facebook images and videos."
+    },
+    {
+      "name": "Instagram",
+      "description": "Instagram profiles, posts, reels, highlights, search and locations."
+    },
+    {
+      "name": "Account",
+      "description": "Your plan, usage and limits. These calls are free."
+    }
+  ],
+  "paths": {
+    "/facebook/pages/id": {
+      "get": {
+        "operationId": "facebook_get_page_id",
+        "summary": "Get Facebook page id",
+        "description": "Resolve a Facebook page URL to its numeric page ID. Use it when another tool needs a page or profile ID; use facebook_get_page_details for the page's data. Pricing: 1 credit per call.",
+        "tags": [
+          "Facebook Pages"
+        ],
+        "parameters": [
+          {
+            "name": "link",
+            "in": "query",
+            "required": true,
+            "description": "Facebook page URL (e.g., https://facebook.com/nike)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/facebook/pages/details": {
+      "get": {
+        "operationId": "facebook_get_page_details",
+        "summary": "Get Facebook page details.",
+        "description": "Get a Facebook page's profile: name, category, follower and like counts, bio, contact info (email, phone, website, address), rating and the ad_page_id used by the Ads Library tools. Use it when you have the page URL; to find a page by name, use facebook_search_pages first. Pricing: 1 credit per call; 5 credits when exact_followers_count=true.",
+        "tags": [
+          "Facebook Pages"
+        ],
+        "parameters": [
+          {
+            "name": "link",
+            "in": "query",
+            "required": true,
+            "description": "Facebook page URL",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "exact_followers_count",
+            "in": "query",
+            "required": false,
+            "description": "When true, performs a deeper scrape to return the exact follower count (e.g. 38,493,217 instead of \"38M\"). Charges 5 credits when true, 1 credit otherwise. Default: false.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "page_section",
+            "in": "query",
+            "required": false,
+            "description": "Which section to return. `default`: the page's standard details. `about`: details read from the page's About tab. `work_and_education`: the standard details plus the profile's work and education history (`work_and_education.work`, `.college`, `.high_school`; each entry has title, organization, period, location and description). Default: default.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/facebook/pages/posts": {
+      "get": {
+        "operationId": "facebook_get_page_posts",
+        "summary": "Get Facebook page posts.",
+        "description": "List a Facebook page's recent posts, newest first, with text, media, reactions, comment and share counts. Returns 3-9 posts per call plus an end_cursor for the next page; filter by date with after_time / before_time. For reels or videos only, use facebook_get_page_reels or facebook_get_page_videos. Pricing: ceil(posts_returned / 3) credits per call, minimum 1.",
+        "tags": [
+          "Facebook Pages"
+        ],
+        "parameters": [
+          {
+            "name": "link",
+            "in": "query",
+            "required": true,
+            "description": "Facebook page URL",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Maximum number of posts to return. Default: 3. Minimum: 3. Maximum: 9.",
+            "schema": {
+              "type": "number",
+              "minimum": 3,
+              "maximum": 9
+            }
+          },
+          {
+            "name": "end_cursor",
+            "in": "query",
+            "required": false,
+            "description": "Pagination cursor for next page of results",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "after_time",
+            "in": "query",
+            "required": false,
+            "description": "ISO 8601 timestamp - only return posts after this time",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "before_time",
+            "in": "query",
+            "required": false,
+            "description": "ISO 8601 timestamp - only return posts before this time",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "timezone",
+            "in": "query",
+            "required": false,
+            "description": "Timezone for timestamps (e.g., UTC, America/New_York)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/facebook/pages/reels": {
+      "get": {
+        "operationId": "facebook_get_page_reels",
+        "summary": "Get Facebook page reels",
+        "description": "List a Facebook page's reels (short-form videos). Returns an end_cursor for the next page. For long-form videos, use facebook_get_page_videos. Pricing: 1 credit per call.",
+        "tags": [
+          "Facebook Pages"
+        ],
+        "parameters": [
+          {
+            "name": "link",
+            "in": "query",
+            "required": true,
+            "description": "Facebook page URL",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "end_cursor",
+            "in": "query",
+            "required": false,
+            "description": "Pagination cursor",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/facebook/pages/videos": {
+      "get": {
+        "operationId": "facebook_get_page_videos",
+        "summary": "Get Facebook page videos",
+        "description": "List videos uploaded to a Facebook page, with video_id, title, duration, view count and thumbnail. Provide the page URL (link) or its numeric profile_id. Returns an end_cursor for the next page. For short-form reels, use facebook_get_page_reels. Pricing: 1 credit per call.",
+        "tags": [
+          "Facebook Pages"
+        ],
+        "parameters": [
+          {
+            "name": "link",
+            "in": "query",
+            "required": true,
+            "description": "Facebook page URL",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "end_cursor",
+            "in": "query",
+            "required": false,
+            "description": "Pagination cursor",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/facebook/pages/albums": {
+      "get": {
+        "operationId": "facebook_get_page_albums",
+        "summary": "List the photo albums of a Facebook page (album_id, album_title, url, thumbnail_uri, album_items_count).",
+        "description": "List the photo albums of a Facebook page, with album_id, album_title, url, thumbnail_uri and album_items_count (text, e.g. \"400 items\"). Needs the numeric page ID (profile_id) from facebook_get_page_id. Returns an end_cursor for the next page. To get the photos in an album, pass its album_id to facebook_get_album_items. Pricing: 1 credit per call.",
+        "tags": [
+          "Facebook Pages"
+        ],
+        "parameters": [
+          {
+            "name": "profile_id",
+            "in": "query",
+            "required": true,
+            "description": "Facebook page ID, from facebook_get_page_id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Maximum number of albums to return. Default: 8. Minimum: 8. Maximum: 16.",
+            "schema": {
+              "type": "number",
+              "minimum": 8,
+              "maximum": 16
+            }
+          },
+          {
+            "name": "end_cursor",
+            "in": "query",
+            "required": false,
+            "description": "Pagination cursor",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/facebook/groups/id": {
+      "get": {
+        "operationId": "facebook_get_group_id",
+        "summary": "Retrieve the Facebook Group ID from a public group link.",
+        "description": "Resolve a Facebook group URL to its numeric group ID. Use facebook_get_group_details for the group's data. Pricing: 1 credit per call.",
+        "tags": [
+          "Facebook Groups"
+        ],
+        "parameters": [
+          {
+            "name": "link",
+            "in": "query",
+            "required": true,
+            "description": "Facebook group URL",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/facebook/groups/details": {
+      "get": {
+        "operationId": "facebook_get_group_details",
+        "summary": "Get detailed metadata and statistics about a Facebook group including member count, description, and rules.",
+        "description": "Get a public Facebook group's profile: name, description, member count, privacy, rules and activity stats. Use facebook_get_group_posts for its posts. Pricing: 1 credit per call.",
+        "tags": [
+          "Facebook Groups"
+        ],
+        "parameters": [
+          {
+            "name": "link",
+            "in": "query",
+            "required": true,
+            "description": "Facebook group URL",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/facebook/groups/posts": {
+      "get": {
+        "operationId": "facebook_get_group_posts",
+        "summary": "Fetch recent posts from a Facebook group, including text, media, reactions, and comments.",
+        "description": "List recent posts from a public Facebook group, with text, media, author, reactions and comment counts. Returns 3-9 posts per call plus an end_cursor for the next page; filter by date with after_time / before_time. Pricing: ceil(posts_returned / 3) credits per call, minimum 1.",
+        "tags": [
+          "Facebook Groups"
+        ],
+        "parameters": [
+          {
+            "name": "link",
+            "in": "query",
+            "required": true,
+            "description": "Facebook group URL",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Maximum number of posts to return. Default: 3. Minimum: 3. Maximum: 9.",
+            "schema": {
+              "type": "number",
+              "minimum": 3,
+              "maximum": 9
+            }
+          },
+          {
+            "name": "end_cursor",
+            "in": "query",
+            "required": false,
+            "description": "Pagination cursor",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "after_time",
+            "in": "query",
+            "required": false,
+            "description": "ISO 8601 timestamp",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "before_time",
+            "in": "query",
+            "required": false,
+            "description": "ISO 8601 timestamp",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "timezone",
+            "in": "query",
+            "required": false,
+            "description": "IANA timezone for returned timestamps, e.g. UTC or America/New_York. Default: UTC.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/facebook/groups/videos": {
+      "get": {
+        "operationId": "facebook_get_group_videos",
+        "summary": "Get videos from a Facebook group with pagination.",
+        "description": "List videos posted in a public Facebook group, with video_id, title, duration, view count and thumbnail. Returns an end_cursor for the next page. Pricing: 1 credit per call.",
+        "tags": [
+          "Facebook Groups"
+        ],
+        "parameters": [
+          {
+            "name": "link",
+            "in": "query",
+            "required": true,
+            "description": "Facebook group URL",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "end_cursor",
+            "in": "query",
+            "required": false,
+            "description": "Pagination cursor",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/facebook/groups/albums": {
+      "get": {
+        "operationId": "facebook_get_group_albums",
+        "summary": "List the photo albums of a Facebook group (album_id, album_title, url, thumbnail_uri, photos_count, videos_count).",
+        "description": "List the photo albums of a public Facebook group, with album_id, album_title, url, thumbnail_uri, photos_count and videos_count. Returns an end_cursor for the next page. Needs the numeric group ID (group_id) from facebook_get_group_id. To get the photos in an album, pass its album_id to facebook_get_album_items. Pricing: 1 credit per call.",
+        "tags": [
+          "Facebook Groups"
+        ],
+        "parameters": [
+          {
+            "name": "group_id",
+            "in": "query",
+            "required": true,
+            "description": "Facebook group ID, from facebook_get_group_id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Maximum number of albums to return. Default: 8. Minimum: 8. Maximum: 16.",
+            "schema": {
+              "type": "number",
+              "minimum": 8,
+              "maximum": 16
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/facebook/albums/items": {
+      "get": {
+        "operationId": "facebook_get_album_items",
+        "summary": "Get the photos and videos inside a Facebook album, from a page or a group.",
+        "description": "Get the photos and videos inside a Facebook album (from a page or a group): media_id, media_type, url, thumbnail_uri and timestamp (Unix seconds). Needs an album_id from facebook_get_page_albums or facebook_get_group_albums. Returns an end_cursor for the next page. Pricing: 1 credit per call.",
+        "tags": [
+          "Other"
+        ],
+        "parameters": [
+          {
+            "name": "album_id",
+            "in": "query",
+            "required": true,
+            "description": "Album ID, from facebook_get_page_albums or facebook_get_group_albums",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "end_cursor",
+            "in": "query",
+            "required": false,
+            "description": "Pagination cursor",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/facebook/posts/id": {
+      "get": {
+        "operationId": "facebook_get_post_id",
+        "summary": "Extract the Facebook post ID from a given post link.",
+        "description": "Extract the numeric post ID from a Facebook post URL. Use it to get the post_id that facebook_get_post_attachments needs. Pricing: 1 credit per call.",
+        "tags": [
+          "Facebook Posts"
+        ],
+        "parameters": [
+          {
+            "name": "link",
+            "in": "query",
+            "required": true,
+            "description": "Facebook post URL",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/facebook/posts/details": {
+      "get": {
+        "operationId": "facebook_get_post_details",
+        "summary": "Get detailed data about a Facebook post including reactions, media, and user info.",
+        "description": "Get a Facebook post's text, author, timestamp, media, and reaction, comment and share counts. Start here for any post. If you need view counts, video download URLs or audio metadata (common for reels and videos), use facebook_get_post_details_extended instead. Pricing: 1 credit per call.",
+        "tags": [
+          "Facebook Posts"
+        ],
+        "parameters": [
+          {
+            "name": "link",
+            "in": "query",
+            "required": true,
+            "description": "Facebook post URL",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/facebook/posts/details/extended": {
+      "get": {
+        "operationId": "facebook_get_post_details_extended",
+        "summary": "Get extended details about a Facebook post including views, video URLs, music info, and author verification.",
+        "description": "Get everything facebook_get_post_details returns plus view counts, HD/SD video URLs, music/audio metadata and author verification status. Use it for reels and video posts, or when the standard details lack view_count, video_hd_src or attached_track. Pricing: 1 credit per call.",
+        "tags": [
+          "Facebook Posts"
+        ],
+        "parameters": [
+          {
+            "name": "link",
+            "in": "query",
+            "required": true,
+            "description": "Facebook post URL (works for reels, video posts, and regular posts)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/facebook/posts/attachments": {
+      "get": {
+        "operationId": "facebook_get_post_attachments",
+        "summary": "Get details of all media attachments for a given Facebook post.",
+        "description": "List every media attachment (images and videos, with URLs and dimensions) on a Facebook post, including all items in multi-photo posts. Needs the numeric post_id from facebook_get_post_id. For the post's text and engagement, use facebook_get_post_details. Pricing: 5 credits per call (deeper scrape than standard post details).",
+        "tags": [
+          "Facebook Posts"
+        ],
+        "parameters": [
+          {
+            "name": "post_id",
+            "in": "query",
+            "required": true,
+            "description": "Numeric Facebook post ID, from facebook_get_post_id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/facebook/posts/video": {
+      "get": {
+        "operationId": "facebook_get_video_details",
+        "summary": "Retrieve video metadata, feedback stats, and post context for a Facebook video post.",
+        "description": "Get a Facebook video post's metadata: title, message text and hashtags, owner, reactions and view count. Needs the numeric video_id (the number in a facebook.com/.../videos/<id> URL, or from facebook_get_page_videos). Pricing: 1 credit per call.",
+        "tags": [
+          "Facebook Posts"
+        ],
+        "parameters": [
+          {
+            "name": "video_id",
+            "in": "query",
+            "required": true,
+            "description": "Numeric Facebook video ID, e.g. the number in a facebook.com/.../videos/<id> URL",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/facebook/posts/comments": {
+      "get": {
+        "operationId": "facebook_get_post_comments",
+        "summary": "Retrieve top-level comments from a Facebook post or reel.",
+        "description": "List top-level comments on a Facebook post or reel, with author, text, timestamp and reaction count. Returns up to 30 per call plus an end_cursor for the next page. Set include_reply_info=true to get the comment_feedback_id and expansion_token that facebook_get_comment_replies needs. Pricing: 1 credit per call.",
+        "tags": [
+          "Facebook Posts"
+        ],
+        "parameters": [
+          {
+            "name": "link",
+            "in": "query",
+            "required": true,
+            "description": "Facebook post or reel URL",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "end_cursor",
+            "in": "query",
+            "required": false,
+            "description": "Pagination cursor for next page of comments",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "include_reply_info",
+            "in": "query",
+            "required": false,
+            "description": "When \"true\", includes comment_feedback_id and expansion_token for fetching replies",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/facebook/posts/comments/replies": {
+      "get": {
+        "operationId": "facebook_get_comment_replies",
+        "summary": "Fetch replies to a specific comment on a Facebook post.",
+        "description": "List replies to one Facebook comment. Needs comment_feedback_id and expansion_token, which facebook_get_post_comments returns when called with include_reply_info=true. Pricing: 1 credit per call.",
+        "tags": [
+          "Facebook Posts"
+        ],
+        "parameters": [
+          {
+            "name": "comment_feedback_id",
+            "in": "query",
+            "required": true,
+            "description": "Feedback ID from the comments endpoint with include_reply_info=true",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "expansion_token",
+            "in": "query",
+            "required": true,
+            "description": "Expansion token from the comments endpoint with include_reply_info=true",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/facebook/search/pages": {
+      "get": {
+        "operationId": "facebook_search_pages",
+        "summary": "Search for Facebook pages by keyword with optional location filtering.",
+        "description": "Find Facebook pages by keyword (brand, business or topic name), optionally near a location. Returns page names, URLs, categories and follower counts, 3 per call, plus an end_cursor. Use it when you don't have the page URL; then call facebook_get_page_details with a result's URL. For locations, get a location_uid from facebook_search_locations. Pricing: 1 credit per call.",
+        "tags": [
+          "Facebook Search"
+        ],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "description": "Keyword to search for, e.g. a brand or business name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "location_uid",
+            "in": "query",
+            "required": false,
+            "description": "Location UID for filtering (from search/locations endpoint)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "end_cursor",
+            "in": "query",
+            "required": false,
+            "description": "Pagination cursor",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/facebook/search/people": {
+      "get": {
+        "operationId": "facebook_search_people",
+        "summary": "Search for Facebook people/profiles by keyword with optional location filtering.",
+        "description": "Find public Facebook profiles by name or keyword, optionally near a location (location_uid from facebook_search_locations). Returns names, profile URLs and pictures, plus work, education and location where public, and an end_cursor. Pricing: 1 credit per call.",
+        "tags": [
+          "Facebook Search"
+        ],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "description": "Name or keyword to search for",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "location_uid",
+            "in": "query",
+            "required": false,
+            "description": "Location UID for filtering",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "end_cursor",
+            "in": "query",
+            "required": false,
+            "description": "Pagination cursor",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/facebook/search/locations": {
+      "get": {
+        "operationId": "facebook_search_locations",
+        "summary": "Search for Facebook locations by keyword.",
+        "description": "Look up Facebook places by name (city, region, venue) and get their location_uid. The location_uid is only used to filter facebook_search_pages, facebook_search_people and facebook_search_posts; it is not a Marketplace location (use facebook_marketplace_city_coordinates for that). Pricing: 1 credit per call.",
+        "tags": [
+          "Facebook Search"
+        ],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "description": "Search query (city, place, landmark)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/facebook/search/posts": {
+      "get": {
+        "operationId": "facebook_search_posts",
+        "summary": "Search for Facebook posts by keyword with optional location and time filters.",
+        "description": "Search public Facebook posts by keyword, optionally filtered by location (location_uid from facebook_search_locations) and date range. Returns posts with text, author and engagement, plus an end_cursor. To list one page's posts, use facebook_get_page_posts instead. Pricing: 1 credit per call.",
+        "tags": [
+          "Facebook Search"
+        ],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "description": "Keyword or phrase to search post text for",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "location_uid",
+            "in": "query",
+            "required": false,
+            "description": "Location UID for filtering",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "start_time",
+            "in": "query",
+            "required": false,
+            "description": "Filter posts after this date (YYYY-MM-DD)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "end_time",
+            "in": "query",
+            "required": false,
+            "description": "Filter posts before this date (YYYY-MM-DD)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "recent_posts",
+            "in": "query",
+            "required": false,
+            "description": "When \"true\", shows only recent posts",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "end_cursor",
+            "in": "query",
+            "required": false,
+            "description": "Pagination cursor",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/facebook/search/videos": {
+      "get": {
+        "operationId": "facebook_search_videos",
+        "summary": "Search for Facebook videos by keyword with optional recency and live filters.",
+        "description": "Search public Facebook videos by keyword, optionally most recent first or live videos only. Returns video titles, URLs and view counts, plus an end_cursor. Pricing: 1 credit per call.",
+        "tags": [
+          "Facebook Search"
+        ],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "description": "Keyword or phrase to search videos for",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "most_recent",
+            "in": "query",
+            "required": false,
+            "description": "When \"true\", shows most recent videos first",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "videos_live",
+            "in": "query",
+            "required": false,
+            "description": "When \"true\", filters for live videos only",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "required": false,
+            "description": "Comma-separated list of response fields to include",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "end_cursor",
+            "in": "query",
+            "required": false,
+            "description": "Pagination cursor",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/facebook/ads/countries": {
+      "get": {
+        "operationId": "facebook_ads_countries",
+        "summary": "Get list of supported country codes for Meta Ads Library filtering.",
+        "description": "List the country codes the Ads Library tools accept in their country parameter. Pricing: 1 credit per call.",
+        "tags": [
+          "Meta Ads Library"
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/facebook/ads/search": {
+      "get": {
+        "operationId": "facebook_ads_search",
+        "summary": "Search ads in the Meta Ad Library by keyword or page ID with filters.",
+        "description": "Search ads in the Meta Ad Library. Pass a keyword (query) to find ads about a topic, or ad_page_id to list one advertiser's ads; filter by country, active status and date range, sort by impressions or recency. Returns ads with creative, body text, dates, platforms and snapshot URL, plus an end_cursor. Get an advertiser's ad_page_id from facebook_ads_keywords or facebook_get_page_details. Pricing: 1 credit per call.",
+        "tags": [
+          "Meta Ads Library"
+        ],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": false,
+            "description": "Search keyword for ads",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ad_page_id",
+            "in": "query",
+            "required": false,
+            "description": "Facebook AD Page ID (alternative to query)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "required": false,
+            "description": "ISO country code or \"ALL\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "activeStatus",
+            "in": "query",
+            "required": false,
+            "description": "Filter: ALL, Active, or Inactive",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "after_time",
+            "in": "query",
+            "required": false,
+            "description": "Filter ads after this date (YYYY-MM-DD)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "before_time",
+            "in": "query",
+            "required": false,
+            "description": "Filter ads before this date (YYYY-MM-DD)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort_data",
+            "in": "query",
+            "required": false,
+            "description": "Sort by \"impressions\" or \"recent\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "end_cursor",
+            "in": "query",
+            "required": false,
+            "description": "Pagination cursor",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/facebook/ads/page-details": {
+      "get": {
+        "operationId": "facebook_ads_page_details",
+        "summary": "Get detailed info about a specific Facebook page from the Ads Library.",
+        "description": "Get an advertiser's Ads Library profile: page name, verification status, category, location and total ad count. Needs the page ID (ad_page_id from facebook_get_page_details or page_id from facebook_ads_keywords). To list the ads themselves, use facebook_ads_search with ad_page_id. Pricing: 1 credit per call.",
+        "tags": [
+          "Meta Ads Library"
+        ],
+        "parameters": [
+          {
+            "name": "page_id",
+            "in": "query",
+            "required": true,
+            "description": "Advertiser page ID: ad_page_id from facebook_get_page_details, or page_id from facebook_ads_keywords",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/facebook/ads/archive-details": {
+      "get": {
+        "operationId": "facebook_ads_archive_details",
+        "summary": "Get detailed info about a specific archived ad by archive ID.",
+        "description": "Get one Ad Library ad in full: creative, body text, CTA, platforms, countries, date range, and spend and impression estimates where Meta publishes them. Needs the ad_archive_id from a facebook_ads_search result. Pricing: 1 credit per call.",
+        "tags": [
+          "Meta Ads Library"
+        ],
+        "parameters": [
+          {
+            "name": "ad_archive_id",
+            "in": "query",
+            "required": true,
+            "description": "Ad Library archive ID of the ad (ad_archive_id from a facebook_ads_search result)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page_id",
+            "in": "query",
+            "required": false,
+            "description": "Facebook Page ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "required": false,
+            "description": "ISO country code or \"ALL\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "is_ad_non_political",
+            "in": "query",
+            "required": false,
+            "description": "Filter non-political ads",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "is_ad_not_aaa_eligible",
+            "in": "query",
+            "required": false,
+            "description": "Filter AAA eligibility",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/facebook/ads/keywords": {
+      "get": {
+        "operationId": "facebook_ads_keywords",
+        "summary": "Search for ads by keyword with optional country filter.",
+        "description": "Find advertisers running ads that match a keyword: returns Facebook pages with their page_id and ad count. Use it to discover who advertises on a topic, then pass a page_id to facebook_ads_search (as ad_page_id) or facebook_ads_page_details. To get the ads for a keyword directly, use facebook_ads_search. Pricing: 1 credit per call.",
+        "tags": [
+          "Meta Ads Library"
+        ],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "description": "Keyword to find advertisers for, e.g. running shoes",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "required": false,
+            "description": "ISO country code or \"ALL\"",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/facebook/marketplace/search": {
+      "get": {
+        "operationId": "facebook_marketplace_search",
+        "summary": "Search Facebook Marketplace items with filters for location, price, category, condition, and more.",
+        "description": "Search general Facebook Marketplace listings (items for sale) by keyword or category near a location, with price, condition, radius and sort filters. Returns listings with their listing_id, plus an end_cursor. For cars and other vehicles use facebook_marketplace_vehicles; for homes and rooms to rent use facebook_marketplace_rentals. Get coordinates from facebook_marketplace_city_coordinates. Pricing: 1 credit per call.",
+        "tags": [
+          "Facebook Marketplace"
+        ],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": false,
+            "description": "Keyword to search listings for, e.g. iphone 15",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "category_url",
+            "in": "query",
+            "required": false,
+            "description": "Category URL slug",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "proxy_country",
+            "in": "query",
+            "required": false,
+            "description": "Optional premium proxy country",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "commerce_search_sort_by",
+            "in": "query",
+            "required": false,
+            "description": "Sort: BEST_MATCH, CREATION_TIME_DESCEND, PRICE_ASCEND, etc.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "commerce_search_and_rp_condition",
+            "in": "query",
+            "required": false,
+            "description": "Condition: new, used_like_new, used_good, used_fair",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter_location_latitude",
+            "in": "query",
+            "required": false,
+            "description": "Latitude of the search center, e.g. 30.2672 (from facebook_marketplace_city_coordinates)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter_location_longitude",
+            "in": "query",
+            "required": false,
+            "description": "Longitude of the search center, e.g. -97.7431 (from facebook_marketplace_city_coordinates)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter_price_lower_bound",
+            "in": "query",
+            "required": false,
+            "description": "Minimum price in the local currency, whole number, e.g. 100",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "filter_price_upper_bound",
+            "in": "query",
+            "required": false,
+            "description": "Maximum price in the local currency, whole number, e.g. 2000",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "filter_radius_km",
+            "in": "query",
+            "required": false,
+            "description": "Search radius around the center in kilometres, e.g. 40",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "posted_today",
+            "in": "query",
+            "required": false,
+            "description": "When \"true\", limit to items posted today",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "exact_match",
+            "in": "query",
+            "required": false,
+            "description": "When \"true\", exact match search",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "end_cursor",
+            "in": "query",
+            "required": false,
+            "description": "Pagination cursor",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "required": false,
+            "description": "Comma-separated keys to include (e.g. 'items.id,items.title,page_info.end_cursor'). Invalid keys are ignored.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/facebook/marketplace/listing": {
+      "get": {
+        "operationId": "facebook_marketplace_listing",
+        "summary": "Get detailed info about a single Marketplace listing.",
+        "description": "Get one Marketplace listing in full: title, price, description, condition, all photos, location and seller. Needs the listing_id from a Marketplace search result. Pricing: 1 credit per call.",
+        "tags": [
+          "Facebook Marketplace"
+        ],
+        "parameters": [
+          {
+            "name": "listing_id",
+            "in": "query",
+            "required": true,
+            "description": "Marketplace listing ID, from a Marketplace search result",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/facebook/marketplace/seller": {
+      "get": {
+        "operationId": "facebook_marketplace_seller",
+        "summary": "Get seller profile, ratings, reviews, and badges.",
+        "description": "Get a Marketplace seller's profile: name, join date, rating, review count and badges. Needs the seller_id from facebook_marketplace_listing. Pricing: 1 credit per call.",
+        "tags": [
+          "Facebook Marketplace"
+        ],
+        "parameters": [
+          {
+            "name": "seller_id",
+            "in": "query",
+            "required": true,
+            "description": "Seller ID, from the seller field of facebook_marketplace_listing",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/facebook/marketplace/categories": {
+      "get": {
+        "operationId": "facebook_marketplace_categories",
+        "summary": "Get all Marketplace categories with seo_url and category ID values.",
+        "description": "List Marketplace categories with their IDs and category_url values. Use a category_url to filter facebook_marketplace_search. Pricing: 1 credit per call.",
+        "tags": [
+          "Facebook Marketplace"
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/facebook/marketplace/city-coordinates": {
+      "get": {
+        "operationId": "facebook_marketplace_city_coordinates",
+        "summary": "Get GPS coordinates for a city to use as Marketplace location filters.",
+        "description": "Convert a city name to the latitude and longitude that the Marketplace search tools expect in filter_location_latitude / filter_location_longitude. Pricing: 1 credit per call.",
+        "tags": [
+          "Facebook Marketplace"
+        ],
+        "parameters": [
+          {
+            "name": "city",
+            "in": "query",
+            "required": true,
+            "description": "City name, e.g. Austin",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "required": false,
+            "description": "Country name or code",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "exactly_one",
+            "in": "query",
+            "required": false,
+            "description": "When \"true\", return exactly one result",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/facebook/marketplace/vehicles": {
+      "get": {
+        "operationId": "facebook_marketplace_vehicles",
+        "summary": "Search Marketplace vehicle listings with filters for location, price, mileage, year, and more.",
+        "description": "Search Facebook Marketplace vehicle listings (cars, trucks, motorcycles) near a location, with price, radius and seller-type filters. Returns listings with title, price, mileage, year and listing_id, plus an end_cursor. For non-vehicle items, use facebook_marketplace_search. Pricing: 1 credit per call.",
+        "tags": [
+          "Facebook Marketplace"
+        ],
+        "parameters": [
+          {
+            "name": "sort_by",
+            "in": "query",
+            "required": false,
+            "description": "Sort: CREATION_TIME_DESCEND, PRICE_ASCEND, VEHICLE_MILEAGE_ASCEND, etc.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter_location_latitude",
+            "in": "query",
+            "required": false,
+            "description": "Latitude of the search center, e.g. 30.2672 (from facebook_marketplace_city_coordinates)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter_location_longitude",
+            "in": "query",
+            "required": false,
+            "description": "Longitude of the search center, e.g. -97.7431 (from facebook_marketplace_city_coordinates)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter_price_lower_bound",
+            "in": "query",
+            "required": false,
+            "description": "Minimum price in the local currency, whole number, e.g. 100",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "filter_price_upper_bound",
+            "in": "query",
+            "required": false,
+            "description": "Maximum price in the local currency, whole number, e.g. 2000",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "filter_radius_km",
+            "in": "query",
+            "required": false,
+            "description": "Search radius around the center in kilometres, e.g. 40",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "is_c2c_listing_only",
+            "in": "query",
+            "required": false,
+            "description": "Individual sellers only",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "exact_match",
+            "in": "query",
+            "required": false,
+            "description": "Exact match search",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "end_cursor",
+            "in": "query",
+            "required": false,
+            "description": "Pagination cursor",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/facebook/marketplace/rentals": {
+      "get": {
+        "operationId": "facebook_marketplace_rentals",
+        "summary": "Search Marketplace rental property listings with filters for bedrooms, bathrooms, location, and price.",
+        "description": "Search Facebook Marketplace rental listings (apartments, houses, rooms) near a location, with price, bedroom, bathroom and radius filters. Returns rental listings with their listing_id, plus an end_cursor. For items for sale, use facebook_marketplace_search. Pricing: 1 credit per call.",
+        "tags": [
+          "Facebook Marketplace"
+        ],
+        "parameters": [
+          {
+            "name": "sort_by",
+            "in": "query",
+            "required": false,
+            "description": "Sort: CREATION_TIME_DESCEND, PRICE_ASCEND, BEST_MATCH",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter_location_latitude",
+            "in": "query",
+            "required": false,
+            "description": "Latitude of the search center, e.g. 30.2672 (from facebook_marketplace_city_coordinates)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter_location_longitude",
+            "in": "query",
+            "required": false,
+            "description": "Longitude of the search center, e.g. -97.7431 (from facebook_marketplace_city_coordinates)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter_price_lower_bound",
+            "in": "query",
+            "required": false,
+            "description": "Minimum price in the local currency, whole number, e.g. 100",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "filter_price_upper_bound",
+            "in": "query",
+            "required": false,
+            "description": "Maximum price in the local currency, whole number, e.g. 2000",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "filter_radius_km",
+            "in": "query",
+            "required": false,
+            "description": "Search radius around the center in kilometres, e.g. 40",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "filter_bedrooms_min",
+            "in": "query",
+            "required": false,
+            "description": "Minimum number of bedrooms, e.g. 2",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "filter_bedrooms_max",
+            "in": "query",
+            "required": false,
+            "description": "Maximum number of bedrooms",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "filter_bathrooms_min",
+            "in": "query",
+            "required": false,
+            "description": "Minimum number of bathrooms, e.g. 1",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "filter_bathrooms_max",
+            "in": "query",
+            "required": false,
+            "description": "Maximum number of bathrooms",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "is_c2c_listing_only",
+            "in": "query",
+            "required": false,
+            "description": "Individual sellers only",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "end_cursor",
+            "in": "query",
+            "required": false,
+            "description": "Pagination cursor",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/facebook/media/download": {
+      "get": {
+        "operationId": "facebook_download_media",
+        "summary": "Download media (images, videos, audio) from Facebook URLs.",
+        "description": "Resolve a Facebook media URL (image, video or audio, e.g. from a post or reel) to direct downloadable file URLs. Returns URLs, not file bytes. Pricing: 1 credit per call.",
+        "tags": [
+          "Facebook Media"
+        ],
+        "parameters": [
+          {
+            "name": "url",
+            "in": "query",
+            "required": true,
+            "description": "Facebook media URL to download",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/instagram/user/id": {
+      "get": {
+        "operationId": "instagram_get_user_id",
+        "summary": "Get the unique ID of any Instagram profile from link or username.",
+        "description": "Resolve an Instagram username or profile URL to its two IDs: user_id (long, e.g. 17841401474538262), used by instagram_get_profile_posts and instagram_get_profile_reels, and pk (short, e.g. 528817151), used by instagram_get_profile_highlights. Pricing: 1 credit per call.",
+        "tags": [
+          "Instagram"
+        ],
+        "parameters": [
+          {
+            "name": "link",
+            "in": "query",
+            "required": false,
+            "description": "Instagram profile URL",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "username",
+            "in": "query",
+            "required": false,
+            "description": "Instagram username",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/instagram/profile/details": {
+      "get": {
+        "operationId": "instagram_get_profile_details",
+        "summary": "Get user profile information by username including bio, followers, posts count, and related profiles.",
+        "description": "Get an Instagram profile by username: bio, follower and post counts, verification status and related profiles. Pricing: 1 credit per call.",
+        "tags": [
+          "Instagram"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "query",
+            "required": true,
+            "description": "Instagram username",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "link",
+            "in": "query",
+            "required": false,
+            "description": "Instagram profile URL (alternative to username)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/instagram/profile/posts": {
+      "get": {
+        "operationId": "instagram_get_profile_posts",
+        "summary": "Get posts from a user profile with pagination.",
+        "description": "List an Instagram profile's posts (photos, videos, carousels) with captions, like and comment counts and media URLs. Pass username (returns more results) or user_id (the long user_id from instagram_get_user_id, not the pk). Returns an end_cursor for the next page. For reels only, use instagram_get_profile_reels. Pricing: 1 credit per call.",
+        "tags": [
+          "Instagram"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "query",
+            "required": false,
+            "description": "Instagram username (recommended — returns more results)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "description": "Long Instagram user ID: user_id from instagram_get_user_id (e.g. 17841401474538262), not the pk. Alternative to username.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "end_cursor",
+            "in": "query",
+            "required": false,
+            "description": "Pagination cursor for next page",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/instagram/profile/reels": {
+      "get": {
+        "operationId": "instagram_get_profile_reels",
+        "summary": "Get reels from a user profile with pagination.",
+        "description": "List an Instagram profile's reels with play counts, captions, video URLs and audio metadata. Needs the long user_id from instagram_get_user_id (not the pk). Returns an end_cursor for the next page. Pricing: 1 credit per call.",
+        "tags": [
+          "Instagram"
+        ],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": true,
+            "description": "Long Instagram user ID: user_id from instagram_get_user_id (e.g. 17841401474538262), not the pk.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "end_cursor",
+            "in": "query",
+            "required": false,
+            "description": "Pagination cursor for next page",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/instagram/profile/highlights": {
+      "get": {
+        "operationId": "instagram_get_profile_highlights",
+        "summary": "Get all highlights from a user profile.",
+        "description": "List an Instagram profile's story highlights with titles, cover images and highlight IDs. Needs the profile's pk from instagram_get_user_id, passed as user_id (not the long user_id). Use instagram_get_highlight_details to get the stories in one highlight. Pricing: 1 credit per call.",
+        "tags": [
+          "Instagram"
+        ],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": true,
+            "description": "The profile's pk from instagram_get_user_id (e.g. 528817151), not the long user_id.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/instagram/highlight/details": {
+      "get": {
+        "operationId": "instagram_get_highlight_details",
+        "summary": "Get details of a specific highlight by ID.",
+        "description": "Get the stories inside one Instagram highlight. Needs a highlight_id from instagram_get_profile_highlights. Pricing: 1 credit per call.",
+        "tags": [
+          "Instagram"
+        ],
+        "parameters": [
+          {
+            "name": "highlight_id",
+            "in": "query",
+            "required": true,
+            "description": "Highlight ID (from profile highlights endpoint)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/instagram/post/id": {
+      "get": {
+        "operationId": "instagram_get_post_id",
+        "summary": "Extract the post shortcode from an Instagram URL.",
+        "description": "Extract the shortcode from an Instagram post or reel URL. instagram_get_post_details needs the shortcode. Pricing: 1 credit per call.",
+        "tags": [
+          "Instagram"
+        ],
+        "parameters": [
+          {
+            "name": "link",
+            "in": "query",
+            "required": true,
+            "description": "Instagram post URL",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/instagram/post/details": {
+      "get": {
+        "operationId": "instagram_get_post_details",
+        "summary": "Get details of a specific Instagram post.",
+        "description": "Get one Instagram post or reel in full: caption, media URLs, engagement counts, timestamp and owner. Needs the shortcode (the part after /p/ or /reel/ in the URL, or from instagram_get_post_id). Pricing: 1 credit per call.",
+        "tags": [
+          "Instagram"
+        ],
+        "parameters": [
+          {
+            "name": "shortcode",
+            "in": "query",
+            "required": true,
+            "description": "Instagram post shortcode (e.g., DMF-GjGO0-q)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/instagram/reels/feed": {
+      "get": {
+        "operationId": "instagram_get_reels_feed",
+        "summary": "Get Instagram Reels feed with recommended, trending, or chained clips.",
+        "description": "Get Instagram's recommended and trending reels. Pass clips_media_id from a previous result to continue the feed or get similar reels by the same author. Not tied to a user; for one profile's reels use instagram_get_profile_reels. Pricing: 1 credit per call.",
+        "tags": [
+          "Instagram"
+        ],
+        "parameters": [
+          {
+            "name": "clips_media_id",
+            "in": "query",
+            "required": false,
+            "description": "Clip media ID for chaining/pagination (from previous response)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/instagram/reels/audio": {
+      "get": {
+        "operationId": "instagram_get_reels_by_audio",
+        "summary": "Get Instagram Reels associated with a specific audio/music ID.",
+        "description": "List Instagram reels that use a given sound. Needs the audio_id (music/audio cluster ID) found in reel results' audio metadata. Pass max_id from the previous response for the next page. Pricing: 1 credit per call.",
+        "tags": [
+          "Instagram"
+        ],
+        "parameters": [
+          {
+            "name": "audio_id",
+            "in": "query",
+            "required": true,
+            "description": "Audio cluster ID (music ID)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "max_id",
+            "in": "query",
+            "required": false,
+            "description": "Pagination cursor for next page",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/instagram/search": {
+      "get": {
+        "operationId": "instagram_popular_search",
+        "summary": "Search Instagram by keyword and get popular results (users, hashtags, places).",
+        "description": "Search Instagram by keyword and get the top matching users, hashtags and places. Use it to find a username, or a place's location_id for instagram_get_location_posts. Returns an end_cursor for more. Pricing: 1 credit per call.",
+        "tags": [
+          "Instagram"
+        ],
+        "parameters": [
+          {
+            "name": "keyword",
+            "in": "query",
+            "required": true,
+            "description": "Search keyword/query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "end_cursor",
+            "in": "query",
+            "required": false,
+            "description": "Pagination cursor for next page",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/instagram/location/posts": {
+      "get": {
+        "operationId": "instagram_get_location_posts",
+        "summary": "Get Instagram posts from a specific location (ranked or recent).",
+        "description": "List Instagram posts tagged at a location: top posts (tab=ranked) or most recent (tab=recent). Needs a location_id, e.g. from a place in instagram_popular_search. Returns an end_cursor for the next page. Pricing: 1 credit per call.",
+        "tags": [
+          "Instagram"
+        ],
+        "parameters": [
+          {
+            "name": "location_id",
+            "in": "query",
+            "required": true,
+            "description": "Instagram location ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tab",
+            "in": "query",
+            "required": false,
+            "description": "Filter: \"recent\" or \"ranked\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "end_cursor",
+            "in": "query",
+            "required": false,
+            "description": "Pagination cursor for next page",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/instagram/location/nearby": {
+      "get": {
+        "operationId": "instagram_get_nearby_locations",
+        "summary": "Get nearby places/locations for a specific Instagram location.",
+        "description": "List Instagram places near a given location, with name, category, coordinates and post count. Needs a location_id, e.g. from a place in instagram_popular_search. Pricing: 1 credit per call.",
+        "tags": [
+          "Instagram"
+        ],
+        "parameters": [
+          {
+            "name": "location_id",
+            "in": "query",
+            "required": true,
+            "description": "Instagram location ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/usage": {
+      "get": {
+        "operationId": "account_get_usage",
+        "summary": "Get your plan, credits used and credits remaining.",
+        "description": "Get your plan, credits used and credits remaining. Free, no credits charged.",
+        "tags": [
+          "Account"
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/usage/top-ups": {
+      "get": {
+        "operationId": "account_get_top_ups",
+        "summary": "Get your credit top-up history.",
+        "description": "Get your credit top-up history. Free, no credits charged.",
+        "tags": [
+          "Account"
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    },
+    "/usage/limits": {
+      "get": {
+        "operationId": "account_get_limits",
+        "summary": "Get your plan rate limits.",
+        "description": "Get your plan rate limits. Free, no credits charged.",
+        "tags": [
+          "Account"
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested data. Most responses include a `meta` block with `creditsCharged` and `creditsRemaining`.",
+            "headers": {
+              "X-SocialAPIs-Credits-Deducted": {
+                "$ref": "#/components/headers/CreditsDeducted"
+              },
+              "X-SocialAPIs-Credits-Remaining": {
+                "$ref": "#/components/headers/CreditsRemaining"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "502": {
+            "$ref": "#/components/responses/UpstreamError"
+          },
+          "504": {
+            "$ref": "#/components/responses/UpstreamTimeout"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-token",
+        "description": "Your API key from https://socialapis.io/dashboard"
+      }
+    },
+    "headers": {
+      "CreditsDeducted": {
+        "description": "Credits charged for this call.",
+        "schema": {
+          "type": "integer"
+        }
+      },
+      "CreditsRemaining": {
+        "description": "Credits left on your account after this call.",
+        "schema": {
+          "type": "integer"
+        }
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "error": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "A required parameter is missing or invalid.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Missing or invalid API key.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Forbidden": {
+        "description": "Insufficient credits, expired subscription or paused account.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "RateLimited": {
+        "description": "Rate limit exceeded for your plan. Retry after the limit resets.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "UpstreamError": {
+        "description": "The data source returned an error. No credits are charged.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "UpstreamTimeout": {
+        "description": "The data source took too long to respond. No credits are charged.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    }
+  }
+}

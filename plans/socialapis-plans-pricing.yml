@@ -1,0 +1,65 @@
+generated: '2026-10-19'
+method: searched
+generator: extract-docs-artifacts.py (local)
+source: https://socialapis.io/pricing
+sources:
+- https://socialapis.io/pricing
+name: SocialAPIs pricing
+audience: developer-api
+pricing_basis: per-seat
+plans:
+- name: Free
+  price_text: $0
+  price: 0
+  features:
+  - 200 API calls/month
+  - 1,000 req / hour rate limit
+  limits:
+  - name: API calls per month
+    limit_text: '200'
+  - name: Rate limit
+    limit_text: 1,000 req / hour
+- name: Pro
+  price_text: $ 4.99
+  price: 4.99
+  features:
+  - 1,500 API calls/month
+  - 1 req / sec rate limit
+  limits:
+  - name: API calls per month
+    limit_text: 1,500
+  - name: Rate limit
+    limit_text: 1 req / sec
+- name: Ultra
+  price_text: $ 49
+  price: 49
+  features:
+  - 30,000 API calls/month
+  - 5 req / sec rate limit
+  limits:
+  - name: API calls per month
+    limit_text: 30,000
+  - name: Rate limit
+    limit_text: 5 req / sec
+- name: Mega
+  price_text: $ 179
+  price: 179
+  features:
+  - 120,000 API calls/month
+  - 10 req / sec rate limit
+  limits:
+  - name: API calls per month
+    limit_text: 120,000
+  - name: Rate limit
+    limit_text: 10 req / sec
+- name: Enterprise
+  price_text: Custom
+  features:
+  - Custom volume
+  - 20+ req / sec (custom + SLA)
+  limits:
+  - name: API calls per month
+    limit_text: Custom
+  - name: Rate limit
+    limit_text: 20+ req / sec
+docs: https://socialapis.io/pricing

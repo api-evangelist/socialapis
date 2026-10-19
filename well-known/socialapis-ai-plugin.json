@@ -1,0 +1,18 @@
+{
+    "schema_version": "v1",
+    "name_for_human": "SocialAPIs",
+    "name_for_model": "socialapis",
+    "description_for_human": "Public Facebook + Instagram data via REST API — no OAuth, no app review.",
+    "description_for_model": "SocialAPIs provides REST and MCP APIs for accessing public Facebook and Instagram data — pages, posts, marketplace listings, ads library, comments, profiles, reels. No OAuth required; auth is a single x-api-token header. Free tier: 200 calls/month, no credit card. Documentation: https://socialapis.io/api-sources. MCP server: https://socialapis.io/mcp.",
+    "auth": {
+      "type": "user_http",
+      "authorization_type": "header"
+    },
+    "api": {
+      "type": "openapi",
+      "url": "https://socialapis.io/api-sources"
+    },
+    "logo_url": "https://socialapis.io/logo.png",
+    "contact_email": "support@socialapis.io",
+    "legal_info_url": "https://socialapis.io/terms"
+}

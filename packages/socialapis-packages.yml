@@ -1,0 +1,11 @@
+generated: '2026-10-19'
+method: searched
+source: https://registry.npmjs.org/@socialapis/mcp
+packages:
+  - name: "@socialapis/mcp"
+    registry: "npm"
+    url: "https://www.npmjs.com/package/@socialapis/mcp"
+    language: "javascript"
+    official: true
+    version: "2.1.1"
+    published: "2026-10-16"

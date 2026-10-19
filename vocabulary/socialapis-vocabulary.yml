@@ -1,0 +1,66 @@
+generated: '2026-10-19'
+method: derived
+generator: derive-vocabulary.py
+source: openapi/socialapis-openapi.json
+vocabulary:
+  name: SocialAPIs Domain Vocabulary
+  description: 'Terms declared by SocialAPIs''s own API contract: its resource groups, objects and enumerations, with the contract''s definitions.
+    Derived, not authored.'
+  version: '2026-10-19'
+  terms:
+  - term: Facebook Pages
+    definition: 'Public Facebook pages: details, ID, posts, videos and reels.'
+    tags:
+    - Resource Group
+    source: openapi/socialapis-openapi.json
+  - term: Facebook Groups
+    definition: 'Public Facebook groups: details, ID, posts and videos.'
+    tags:
+    - Resource Group
+    source: openapi/socialapis-openapi.json
+  - term: Facebook Posts
+    definition: 'Facebook posts and videos: details, attachments, comments and replies.'
+    tags:
+    - Resource Group
+    source: openapi/socialapis-openapi.json
+  - term: Facebook Search
+    definition: Keyword search for Facebook pages, people, posts, videos and locations.
+    tags:
+    - Resource Group
+    source: openapi/socialapis-openapi.json
+  - term: Meta Ads Library
+    definition: Ads, advertisers and ad details from the Meta Ads Library.
+    tags:
+    - Resource Group
+    source: openapi/socialapis-openapi.json
+  - term: Facebook Marketplace
+    definition: Marketplace listings, vehicles, rentals, sellers and categories.
+    tags:
+    - Resource Group
+    source: openapi/socialapis-openapi.json
+  - term: Facebook Media
+    definition: Download Facebook images and videos.
+    tags:
+    - Resource Group
+    source: openapi/socialapis-openapi.json
+  - term: Instagram
+    definition: Instagram profiles, posts, reels, highlights, search and locations.
+    tags:
+    - Resource Group
+    source: openapi/socialapis-openapi.json
+  - term: Account
+    definition: Your plan, usage and limits. These calls are free.
+    tags:
+    - Resource Group
+    source: openapi/socialapis-openapi.json
+  - term: Error
+    definition: 'Object declared by the contract with fields: success, error, message, code.'
+    tags:
+    - Object
+    source: openapi/socialapis-openapi.json#/components/schemas/Error
+  - term: Other
+    definition: 'Resource group in the contract; its operation GET /facebook/albums/items: Get the photos and videos inside a Facebook album (from
+      a page or a group): media_id, media_type, url, thumbnail_uri and timestamp (Unix seconds).'
+    tags:
+    - Resource Group
+    source: openapi/socialapis-openapi.json

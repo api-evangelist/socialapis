@@ -1,0 +1,33 @@
+{
+  "@context": {
+    "@vocab": "https://socialapis.io/schema#",
+    "schema": "https://schema.org/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "dcterms": "http://purl.org/dc/terms/",
+    "socialapis": "https://socialapis.io/schema#",
+    "Error": "socialapis:Error",
+    "success": {
+      "@id": "socialapis:success",
+      "@type": "xsd:boolean"
+    },
+    "error": {
+      "@id": "socialapis:error",
+      "@type": "xsd:string"
+    },
+    "message": {
+      "@id": "socialapis:message",
+      "@type": "xsd:string"
+    },
+    "code": {
+      "@id": "socialapis:code",
+      "@type": "xsd:string"
+    }
+  },
+  "@type": "schema:Dataset",
+  "schema:name": "SocialAPIs API JSON-LD context",
+  "schema:description": "A JSON-LD @context for the objects SocialAPIs's own API contract declares: one class per component schema, one property per declared field, typed from the contract. Derived by script (derive-json-ld.py, 2026-10-19) from openapi/socialapis-openapi.json.",
+  "dcterms:created": "2026-10-19",
+  "dcterms:source": [
+    "openapi/socialapis-openapi.json"
+  ]
+}

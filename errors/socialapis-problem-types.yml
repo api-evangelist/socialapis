@@ -1,0 +1,55 @@
+generated: '2026-10-19'
+method: derived
+generator: derive-problem-types.py
+source:
+- openapi/socialapis-openapi.json
+format: custom
+envelope:
+  media_type: application/json
+  schema: Error
+coverage:
+  operations: 53
+  statuses_declared: 6
+problems:
+- status: 400
+  title: Bad Request
+  description: A required parameter is missing or invalid.
+  operations: 53
+  media_types:
+  - application/json
+  schema: Error
+- status: 401
+  title: Unauthorized
+  description: Missing or invalid API key.
+  operations: 53
+  media_types:
+  - application/json
+  schema: Error
+- status: 403
+  title: Forbidden
+  description: Insufficient credits, expired subscription or paused account.
+  operations: 53
+  media_types:
+  - application/json
+  schema: Error
+- status: 429
+  title: Too Many Requests
+  description: Rate limit exceeded for your plan. Retry after the limit resets.
+  operations: 53
+  media_types:
+  - application/json
+  schema: Error
+- status: 502
+  title: Bad Gateway
+  description: The data source returned an error. No credits are charged.
+  operations: 53
+  media_types:
+  - application/json
+  schema: Error
+- status: 504
+  title: Gateway Timeout
+  description: The data source took too long to respond. No credits are charged.
+  operations: 53
+  media_types:
+  - application/json
+  schema: Error

@@ -1,0 +1,113 @@
+# SocialAPIs
+
+> REST APIs for real-time public data from Facebook and Instagram. 200 free API calls / month, no credit card. Trusted by 5,000+ developers and 7.2M+ monthly API calls through the underlying engine.
+
+SocialAPIs is a unified, social-first REST API with flat per-request pricing (~$1.49–$1.63 per 1,000 requests). No bandwidth fees, no compute units, no per-Actor billing. One auth header (`x-api-token`), one rate limit, ~50+ endpoints. First-class MCP server for AI agents (Claude Desktop, ChatGPT Custom Integrations, Cursor).
+
+Live today: Facebook and Instagram. Roadmap (vote on which we build next at <https://socialapis.io/api-sources>): TikTok, X (Twitter), LinkedIn, YouTube.
+
+## What we offer
+
+- [Facebook Page Details](https://socialapis.io/api-sources/facebook-page-details): page metadata, likes, followers, contact info
+- [Facebook Page Posts](https://socialapis.io/api-sources/facebook-page-posts): recent posts, reactions, media, comments
+- [Facebook Search](https://socialapis.io/api-sources/facebook-search-pages): pages, people, posts, locations, videos by keyword
+- [Facebook Group Details](https://socialapis.io/api-sources/facebook-group-details): rules, member count, activity stats
+- [Facebook Group Posts](https://socialapis.io/api-sources/facebook-group-posts): recent posts with engagement
+- [Meta Ads Library Search](https://socialapis.io/api-sources/meta-ads-search): search active ads by keyword or page ID
+- [Meta Ads Archive Details](https://socialapis.io/api-sources/meta-ads-archive-details): detailed ad creative, spend, impressions
+- [Facebook Marketplace Search](https://socialapis.io/api-sources/marketplace-search): listings with location + price filters
+- [Marketplace Listing Details](https://socialapis.io/api-sources/marketplace-listing-details): photos, price, seller info per listing
+- [Instagram Profile Details](https://socialapis.io/api-sources/instagram-profile-details): bio, followers, related profiles
+- [Instagram Profile Posts](https://socialapis.io/api-sources/instagram-profile-posts): photos, videos, carousels with engagement
+- [Instagram Profile Reels](https://socialapis.io/api-sources/instagram-profile-reels): reels with play counts + audio
+- [Instagram Profile Highlights](https://socialapis.io/api-sources/instagram-profile-highlights): cover images + permalinks
+- [Instagram Location Posts](https://socialapis.io/api-sources/instagram-location-posts): top + recent posts tagged at a place
+- [MCP Server for AI agents](https://docs.socialapis.io/ai-agents/mcp): every endpoint as a native MCP tool
+- [Integrations: MCP, SDKs, n8n](https://socialapis.io/integrations): hosted MCP endpoint (https://mcp.socialapis.io/mcp), setup for Claude / Cursor / VS Code / Cline / Windsurf, Python / JS / Go SDKs, n8n node, marketplace listings
+
+## Quick links
+
+- [API endpoint catalog](https://socialapis.io/api-sources): browse 50+ Facebook + Instagram endpoints
+- [Get started in 5 minutes](https://socialapis.io/get-started): quickstart with curl + JSON example
+- [Pricing](https://socialapis.io/pricing): Free / Pro / Ultra / Mega / Enterprise tiers
+- [Compare vs alternatives](https://socialapis.io/compare): Bright Data, Apify, RapidAPI, ScraperAPI
+- [About / team](https://socialapis.io/about): founder, traction screenshots, contact channels
+- [Blog](https://socialapis.io/blog): tutorials, deep-dives, product updates
+- [Full documentation](https://docs.socialapis.io): API reference, AI-agent integration guides
+- [OpenAPI 3.1 spec](https://socialapis.io/openapi.json): every endpoint, parameter, auth header and error code, machine-readable
+- [Sign up free](https://socialapis.io/auth/signup): 200 calls/month, no credit card
+- [Contact support](https://socialapis.io/contact-us): inquiry-type-aware form
+
+## Compare SocialAPIs vs alternatives
+
+- [SocialAPIs vs Bright Data](https://socialapis.io/compare/bright-data): pricing parity, integration shape, procurement
+- [SocialAPIs vs Apify](https://socialapis.io/compare/apify): one billing meter vs three (subscription + compute + per-result)
+- [SocialAPIs vs RapidAPI](https://socialapis.io/compare/rapidapi): unified rate vs overage cliffs + bandwidth fees
+- [SocialAPIs vs ScraperAPI](https://socialapis.io/compare/scraperapi): structured social data vs raw HTML, 0% benchmark on Instagram and Twitter
+
+## Pricing
+
+- Free — 200 calls / month, $0 / mo
+- Pro — 1,500 calls / month, $4.99 / mo
+- Ultra — 30,000 calls / month, $49 / mo
+- Mega — 120,000 calls / month, $179 / mo
+- Enterprise — custom pricing with SLA, dedicated support, IP allowlisting
+
+One credit per successful response. No bandwidth fee, no compute units, no per-endpoint surcharge. Failed requests (4xx caused by bad input) don't consume credits.
+
+## Use cases
+
+- Market research and competitor analysis
+- Social media monitoring and tracking
+- Lead generation from public Facebook + Instagram data
+- Ad intelligence and creative research via Meta Ad Library
+- E-commerce product research via Facebook Marketplace
+- Influencer discovery and analytics
+- AI-agent workflows via MCP (Claude Desktop / ChatGPT / Cursor)
+
+## API examples
+
+Auth header is `x-api-token` — NOT `Authorization: Bearer`.
+
+Get details of a Facebook page:
+
+```bash
+curl "https://api.socialapis.io/facebook/pages/details?link=https%3A%2F%2Fwww.facebook.com%2FEngenSA" \
+  -H "x-api-token: YOUR_API_TOKEN"
+```
+
+Search Facebook pages by keyword:
+
+```bash
+curl "https://api.socialapis.io/facebook/search/pages?query=marketing" \
+  -H "x-api-token: YOUR_API_TOKEN"
+```
+
+Get Instagram profile details:
+
+```bash
+curl "https://api.socialapis.io/instagram/profile/details?username=instagram" \
+  -H "x-api-token: YOUR_API_TOKEN"
+```
+
+## Blog
+
+- [API Integration Best Practices for 2025](https://socialapis.io/blog/api-best-practices): auth, structured logging, idempotency, retry patterns
+- [The Complete Guide to Building AI Agents](https://socialapis.io/blog/building-ai-agents): tool calling, memory, orchestration, MCP
+- [Build an AI Social Media Agent with LangChain](https://socialapis.io/blog/build-ai-social-agent): step-by-step Facebook monitoring agent
+- [Announcing SocialAPIs in the MCP Registry](https://socialapis.io/blog/mcp-launch): first-class MCP support announcement
+
+## Who runs SocialAPIs
+
+SocialAPIs.io was founded in 2026 by Oussema Frikha, registered in the United Arab Emirates. Two engineers, no investors. The company grew out of a Facebook Scraper API still live on RapidAPI that currently handles 7.2M+ API calls a month for 364 customers (last 30 days). Traction numbers are screenshotted from the RapidAPI owner analytics dashboard on the [about page](https://socialapis.io/about) — not rounded marketing figures.
+
+- [Founder bio + traction screenshots](https://socialapis.io/about)
+- [Founder on LinkedIn](https://www.linkedin.com/in/oussema-frikha-379851127/)
+- [Telegram (fastest channel)](https://t.me/socialapis)
+- [Underlying API on RapidAPI](https://rapidapi.com/oussemaf/api/facebook-scraper-api4)
+
+## Optional
+
+- [GitHub organization](https://github.com/SocialAPIsHub)
+- [MCP server on npm](https://www.npmjs.com/package/@socialapis/mcp)
+- [System status](https://socialapis.io/status)
