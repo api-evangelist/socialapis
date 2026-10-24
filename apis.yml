@@ -26,6 +26,11 @@ modified: '2026-10-18'
 
 tags:
 - Company
+- Social Media
+- Data
+- Developers
+tags_raw:
+- Company
 - API
 - Social Media
 - Data
@@ -195,7 +200,8 @@ apis:
   description: The Other API from SocialAPIs — 1 operation(s) for other.
   humanURL: https://docs.socialapis.io/api-reference/facebook
   baseURL: https://api.socialapis.io
-  tags:
+  tags: []
+  tags_raw:
   - Other
   properties:
   - type: OpenAPI
