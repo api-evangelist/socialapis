@@ -8,16 +8,31 @@ artifacts:
   authentication/socialapis-authentication.yml:
     method: derived
     evidence: declared in the artifact
+  certification/observations-2026-11-11.jsonl:
+    method: unknown
+    evidence: no authorship recorded
+  certification/status.yml:
+    method: unknown
+    evidence: no authorship recorded
   conformance/socialapis-conformance.yml:
     method: derived
     evidence: declared in the artifact
+  data-license/socialapis-data-license.yml:
+    method: harvested
+    evidence: declared in the artifact
   data-model/socialapis-data-model.yml:
     method: derived
+    evidence: declared in the artifact
+  eligibility/socialapis-eligibility.yml:
+    method: harvested
     evidence: declared in the artifact
   errors/socialapis-problem-types.yml:
     method: derived
     evidence: declared in the artifact
   heartbeat/2026-11-06.yml:
+    method: unknown
+    evidence: no authorship recorded
+  heartbeat/2026-11-13.yml:
     method: unknown
     evidence: no authorship recorded
   hosts/socialapis-hosts.yml:
@@ -35,7 +50,7 @@ artifacts:
   kin/checks-2026-10-23T222754.yml:
     method: generated
     evidence: Kin Score snapshot written by score.rb
-  kin/checks-2026-11-02T082323.yml:
+  kin/checks-2026-11-06T143934.yml:
     method: generated
     evidence: Kin Score snapshot written by score.rb
   kin/score-2026-10-23T190305.yml:
@@ -54,6 +69,9 @@ artifacts:
     method: generated
     evidence: Kin Score snapshot written by score.rb
   kin/score-2026-11-02T082323.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-11-06T143934.yml:
     method: generated
     evidence: Kin Score snapshot written by score.rb
   llms/socialapis-llms-provenance.yml:
@@ -105,6 +123,9 @@ artifacts:
   plans/socialapis-plans-pricing.yml:
     method: searched
     evidence: declared in the artifact
+  privacy/socialapis-privacy-policy.yml:
+    method: harvested
+    evidence: declared in the artifact
   regulatory/socialapis-regulatory-posture.yml:
     method: unknown
     evidence: no authorship recorded
@@ -114,6 +135,9 @@ artifacts:
   security/socialapis-domain-security.yml:
     method: unknown
     evidence: no authorship recorded
+  terms/socialapis-terms-of-service.yml:
+    method: harvested
+    evidence: declared in the artifact
   vendors/socialapis-vendors.yml:
     method: unknown
     evidence: no authorship recorded
